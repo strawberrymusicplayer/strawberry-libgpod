@@ -18,7 +18,7 @@ all: $(ASSEMBLY_FILE)
 $(ASSEMBLY_FILE).mdb: $(ASSEMBLY_FILE)
 
 $(ASSEMBLY_FILE): $(SOURCES_BUILD)
-	$(MCS) -debug -unsafe -target:$(TARGET) -out:$@ $(LINK) $(SOURCES_BUILD)
+	$(MCS) $(GMCS_FLAGS) -debug -unsafe -target:$(TARGET) -out:$@ $(LINK) $(SOURCES_BUILD)
 
 EXTRA_DIST = $(SOURCES_BUILD)
 

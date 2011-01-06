@@ -315,6 +315,13 @@ dnl **************************************************
 MONO_MIN_VERSION=1.9.1
 GTK_SHARP_MIN_VERSION=2.12
 LIBGPOD_CHECK_MONO
+AC_CHECK_ALIGNOF([double])
+if test "$ac_cv_alignof_double" -eq 4 ; then
+    GMCS_FLAGS=-define:ALIGNMENT_X86_LINUX
+else
+    GMCS_FLAGS=
+fi
+AC_SUBST(GMCS_FLAGS)
 
 dnl warnings bits, copied from gnome-keyring configure.in
 dnl Turn on the additional warnings last, so -Werror doesn't affect other tests.

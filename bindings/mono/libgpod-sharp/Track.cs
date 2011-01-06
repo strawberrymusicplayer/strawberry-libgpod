@@ -24,7 +24,11 @@ namespace GPod {
 	
 	
 	namespace native {
+#if ALIGNMENT_X86_LINUX
+		[StructLayout (LayoutKind.Sequential, Pack=4)]
+#else
 		[StructLayout (LayoutKind.Sequential)]
+#endif
 		internal struct Itdb_Track {
 			public IntPtr		itdb;
 			public IntPtr		title;

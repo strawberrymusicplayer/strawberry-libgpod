@@ -1631,7 +1631,7 @@ struct _Itdb_Track
   gchar   *sort_tvshow;
 /* end of new fields in libgpod 0.5.0 */
   guint32 id;
-  gint32  size;
+  guint32  size;
   gint32  tracklen;
   gint32  cd_nr;
   gint32  cds;

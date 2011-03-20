@@ -101,14 +101,12 @@ static GList *dup_chapters (GList *chapters)
 Itdb_Chapterdata *itdb_chapterdata_duplicate (Itdb_Chapterdata *chapterdata)
 {
     Itdb_Chapterdata *dup;
-    int numchapters;
     g_return_val_if_fail (chapterdata, NULL);
 
     dup = g_new0 (Itdb_Chapterdata, 1);
 
     memcpy (dup, chapterdata, sizeof (Itdb_Chapterdata));
 
-    numchapters = g_list_length (chapterdata->chapters);
     if (chapterdata->chapters)
 	dup->chapters = dup_chapters (chapterdata->chapters);
     else

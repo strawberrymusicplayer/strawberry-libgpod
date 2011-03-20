@@ -612,7 +612,7 @@ static int mk_Library(Itdb_iTunesDB *itdb,
     Itdb_Playlist *dev_playlist = NULL;
     int idx = 0;
     int pos = 0;
-    GHashTable *genre_map;
+    GHashTable *genre_map = NULL;
     GHashTable **orders = NULL;
     guint32 genre_index;
     printf("library_persistent_id = 0x%016"G_GINT64_MODIFIER"x\n", itdb->priv->pid);

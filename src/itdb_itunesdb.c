@@ -5337,7 +5337,6 @@ static void write_one_podcast_group (gpointer key, gpointer value,
     WContents *cts;
     glong mhip_seek;
     guint32 groupid;
-    Itdb_iTunesDB *itdb;
     MHODData mhod;
 
     g_return_if_fail (album);
@@ -5347,7 +5346,6 @@ static void write_one_podcast_group (gpointer key, gpointer value,
     g_return_if_fail (fexp->wcontents);
 
     cts = fexp->wcontents;
-    itdb = fexp->itdb;
     mhip_seek = cts->pos;
 
     groupid = fexp->next_id++;
@@ -6816,7 +6814,6 @@ static gboolean write_bdhs (FExport *fexp)
 	WContents *cts;
 	gulong bdhs_seek;
 	guint32 trackcnt;
-	guint32 playlistcnt;
 
 	g_return_val_if_fail (fexp, FALSE);
 	g_return_val_if_fail (fexp->itdb, FALSE);
@@ -6825,7 +6822,6 @@ static gboolean write_bdhs (FExport *fexp)
 	cts = fexp->wcontents;
 	bdhs_seek = cts->pos;
 	trackcnt = itdb_tracks_number (fexp->itdb);
-	playlistcnt = itdb_playlists_number (fexp->itdb);
 
 	put_header (cts, "bdhs");
 	put32lint (cts, 0x02000003); /* Unknown */
@@ -8335,7 +8331,7 @@ static gboolean itdb_create_directories (Itdb_Device *device, GError **error)
     gboolean result;
     gchar *pbuf;
     gint i, dirnum;
-    gchar *podpath;
+    gchar *podpath = NULL;
     gchar *model_number;
     Itdb_IpodInfo const *info = NULL;
 

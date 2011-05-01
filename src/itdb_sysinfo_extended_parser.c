@@ -517,10 +517,22 @@ static SysInfoIpodProperties *g_value_to_ipod_properties (GValue *value)
     props = g_new0 (SysInfoIpodProperties, 1);
     props->artwork_formats = parse_one_formats_list (sysinfo_dict,
                                                      "AlbumArt");
+    if (props->artwork_formats == NULL) {
+	props->artwork_formats = parse_one_formats_list (sysinfo_dict,
+							 "AlbumArt2");
+    }
     props->photo_formats = parse_one_formats_list (sysinfo_dict,
                                                    "ImageSpecifications");
+    if (props->photo_formats == NULL) {
+	props->photo_formats = parse_one_formats_list (sysinfo_dict,
+						       "ImageSpecifications2");
+    }
     props->chapter_image_formats = parse_one_formats_list (sysinfo_dict,
                                                            "ChapterImageSpecs");
+    if (props->chapter_image_formats == NULL) {
+	props->chapter_image_formats = parse_one_formats_list (sysinfo_dict,
+							       "ChapterImageSpecs2");
+    }
     dict_to_struct (sysinfo_dict,
                     sysinfo_ipod_properties_fields_mapping,
                     props);

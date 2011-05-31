@@ -267,7 +267,7 @@ PyObject* sw_get_photo(GList *list, gint index) {
      g_hash_table_foreach(device->sysinfo, 
 			  hash_table_to_pydict, 
 			  (gpointer) sysinfo);
-     return Py_BuildValue("{s:s,s:i,s:i,s:O}",
+     return Py_BuildValue("{s:s,s:i,s:i,s:O,s:i}",
 			  "mountpoint",
 			  device->mountpoint,
 			  "musicdirs",
@@ -275,7 +275,9 @@ PyObject* sw_get_photo(GList *list, gint index) {
 			  "byte_order",
 			  device->byte_order,
 			  "sysinfo",
-			  sysinfo);
+			  sysinfo,
+                          "timezone_shift",
+                          device->timezone_shift);
    }
  }
 

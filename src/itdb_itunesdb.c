@@ -1355,8 +1355,7 @@ void itdb_free (Itdb_iTunesDB *itdb)
 	            (GFunc)(itdb_playlist_free), NULL);
 	    }
 
-	    if (itdb->priv->genius_cuid)
-	        g_free(itdb->priv->genius_cuid);
+	    g_free(itdb->priv->genius_cuid);
 	}
 
 	g_list_free (itdb->playlists);
@@ -1367,7 +1366,6 @@ void itdb_free (Itdb_iTunesDB *itdb)
 	itdb_device_free (itdb->device);
 	if (itdb->userdata && itdb->userdata_destroy)
 	    (*itdb->userdata_destroy) (itdb->userdata);
-	g_free (itdb->priv->genius_cuid);
 	g_free (itdb->priv);
 	g_free (itdb);
     }

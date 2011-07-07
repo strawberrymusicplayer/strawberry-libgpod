@@ -272,6 +272,7 @@ G_GNUC_INTERNAL void itdb_device_set_timezone_info (Itdb_Device *device)
 	    raw_timezone_converter = raw_timezone_to_utc_shift_5g;
 	    break;
 	case 2952: /* seen on nano 3g and iPod classic */
+	case 2956: /* seen on iPod classic */
 	case 2960: /* seen on nano 4g */
 	    offset = 0xb70;
 	    raw_timezone_converter = raw_timezone_to_utc_shift_6g;

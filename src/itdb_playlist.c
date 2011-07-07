@@ -382,35 +382,35 @@ gboolean itdb_splr_eval (Itdb_SPLRule *splr, Itdb_Track *track)
     switch (splr->field)
     {
     case ITDB_SPLFIELD_SONG_NAME:
-	strcomp = track->title;
+	strcomp = g_utf8_casefold(track->title, -1);
 	handled = TRUE;
 	break;
     case ITDB_SPLFIELD_ALBUM:
-	strcomp = track->album;
+	strcomp = g_utf8_casefold(track->album, -1);
 	handled = TRUE;
 	break;
     case ITDB_SPLFIELD_ARTIST:
-	strcomp = track->artist;
+	strcomp = g_utf8_casefold(track->artist, -1);
 	handled = TRUE;
 	break;
     case ITDB_SPLFIELD_GENRE:
-	strcomp = track->genre;
+	strcomp = g_utf8_casefold(track->genre, -1);
 	handled = TRUE;
 	break;
     case ITDB_SPLFIELD_KIND:
-	strcomp = track->filetype;
+	strcomp = g_utf8_casefold(track->filetype, -1);
 	handled = TRUE;
 	break;
     case ITDB_SPLFIELD_COMMENT:
-	strcomp = track->comment;
+	strcomp = g_utf8_casefold(track->comment, -1);
 	handled = TRUE;
 	break;
     case ITDB_SPLFIELD_COMPOSER:
-	strcomp = track->composer;
+	strcomp = g_utf8_casefold(track->composer, -1);
 	handled = TRUE;
 	break;
     case ITDB_SPLFIELD_GROUPING:
-	strcomp = track->grouping;
+	strcomp = g_utf8_casefold(track->grouping, -1);
 	handled = TRUE;
 	break;
     case ITDB_SPLFIELD_BITRATE:
@@ -474,11 +474,11 @@ gboolean itdb_splr_eval (Itdb_SPLRule *splr, Itdb_Track *track)
 	handled = TRUE;
 	break;
     case ITDB_SPLFIELD_ALBUMARTIST:
-	strcomp = track->albumartist;
+	strcomp = g_utf8_casefold(track->albumartist, -1);
 	handled = TRUE;
 	break;
     case ITDB_SPLFIELD_TVSHOW:
-	strcomp = track->tvshow;
+	strcomp = g_utf8_casefold(track->tvshow, -1);
 	handled = TRUE;
 	break;
     case ITDB_SPLFIELD_LAST_SKIPPED:
@@ -509,33 +509,43 @@ gboolean itdb_splr_eval (Itdb_SPLRule *splr, Itdb_Track *track)
     case ITDB_SPLFT_STRING:
 	if(strcomp && splr->string)
 	{
-	    gint len1 = strlen (strcomp);
-	    gint len2 = strlen (splr->string);
+	    gchar *casefolded_str;
+	    gboolean cmp_result;
+
+	    casefolded_str = g_utf8_casefold(splr->string, -1);
+	    cmp_result = FALSE;
 	    switch (splr->action)
 	    {
 	    case ITDB_SPLACTION_IS_STRING:
-		return (strcmp (strcomp, splr->string) == 0);
+		cmp_result = (strcmp (strcomp, casefolded_str) == 0);
+		break;
 	    case ITDB_SPLACTION_IS_NOT:
-		return (strcmp (strcomp, splr->string) != 0);
+		cmp_result = (strcmp (strcomp, casefolded_str) != 0);
+		break;
 	    case ITDB_SPLACTION_CONTAINS:
-		return (strstr (strcomp, splr->string) != NULL);
+		cmp_result = (strstr (strcomp, casefolded_str) != NULL);
+		break;
 	    case ITDB_SPLACTION_DOES_NOT_CONTAIN:
-		return (strstr (strcomp, splr->string) == NULL);
+		cmp_result = (strstr (strcomp, casefolded_str) == NULL);
+		break;
 	    case ITDB_SPLACTION_STARTS_WITH:
-		return (strncmp (strcomp, splr->string, len2) == 0);
+		cmp_result = g_str_has_prefix(strcomp, casefolded_str);
+		break;
 	    case ITDB_SPLACTION_ENDS_WITH:
-	    if (len2 > len1)  return FALSE;
-	    return (strncmp (strcomp+len1-len2,
-			     splr->string, len2) == 0);
+		cmp_result = g_str_has_suffix(strcomp, casefolded_str);
+		break;
 	    case ITDB_SPLACTION_DOES_NOT_START_WITH:
-		return (strncmp (strcomp, splr->string,
-				 strlen (splr->string)) != 0);
+		cmp_result = !g_str_has_prefix(strcomp, casefolded_str);
+		break;
 	    case ITDB_SPLACTION_DOES_NOT_END_WITH:
-		if (len2 > len1)  return TRUE;
-		return (strncmp (strcomp+len1-len2,
-				 splr->string, len2) != 0);
-	    };
+		cmp_result = !g_str_has_suffix(strcomp, casefolded_str);
+		break;
+	    }
+	    g_free(casefolded_str);
+	    g_free(strcomp);
+	    return cmp_result;
 	}
+	g_free(strcomp);
 	return FALSE;
     case ITDB_SPLFT_INT:
 	switch(splr->action)

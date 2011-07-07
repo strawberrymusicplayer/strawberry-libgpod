@@ -39,10 +39,8 @@ interface."
 %enddef
 
 %pythoncode %{
-version_info = (@LIBGPOD_MAJOR_VERSION@, 
-		@LIBGPOD_MINOR_VERSION@, 
-		@LIBGPOD_MICRO_VERSION@)
-version = '.'.join(map(str, version_info))  
+version = "@PACKAGE_VERSION@"
+version_info = version.split(".")
 %}
 
 %module(docstring=DOCSTRING) gpod

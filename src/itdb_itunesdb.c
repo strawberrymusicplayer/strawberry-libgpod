@@ -3287,7 +3287,7 @@ itdb_parse_internal (Itdb_iTunesDB *itdb, gboolean compressed, GError **error)
 	itdb_hash72_extract_hash_info (fimp->itdb->device,
 				       (guchar *)fimp->fcontents->contents,
 				       fimp->fcontents->length);
-	if (playcounts_init (fimp))
+	if (!playcounts_init (fimp))
 	{
 	    g_warning ("Error parsing recent playcounts");
 	}

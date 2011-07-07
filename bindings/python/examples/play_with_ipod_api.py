@@ -1,8 +1,9 @@
 #!/usr/bin/python
 
 import gpod
+import sys
 
-db = gpod.Database()
+db = gpod.Database(sys.argv[1])
 
 print db
 

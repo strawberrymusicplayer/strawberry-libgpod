@@ -56,9 +56,10 @@ endif # HAVE_HAL
 if USE_UDEV
 libudevdir=@udevdir@
 libudev_PROGRAMS=ipod-set-info
-ipod_set_info_SOURCES = $(COMMON_SOURCES) udev-backend.c
-ipod_set_info_CFLAGS  = $(COMMON_CFLAGS)
-ipod_set_info_LDADD   = $(COMMON_LIBS)
+ipod_set_info_SOURCES   = $(COMMON_SOURCES) udev-backend.c
+ipod_set_info_CFLAGS    = $(COMMON_CFLAGS)
+ipod_set_info_CPPFLAGS  = -DG_LOG_DOMAIN=\"ipod-set-info\"
+ipod_set_info_LDADD     = $(COMMON_LIBS)
 
 rulesdir=${libudevdir}/rules.d
 rules_DATA= 90-libgpod.rules
@@ -74,10 +75,10 @@ endif
 
 if USE_UDEV
 libudev_PROGRAMS+=iphone-set-info
-iphone_set_info_SOURCES = iphone-callout.c ipod-lockdown.c
-iphone_set_info_CFLAGS = $(COMMON_CFLAGS) $(LIBIMOBILEDEVICE_CFLAGS)
-iphone_set_info_LDADD = $(COMMON_LIBS) $(LIBIMOBILEDEVICE_LIBS)
-iphone_set_info_CPPFLAGS = -DUSE_UDEV
+iphone_set_info_SOURCES  = iphone-callout.c ipod-lockdown.c
+iphone_set_info_CFLAGS   = $(COMMON_CFLAGS) $(LIBIMOBILEDEVICE_CFLAGS)
+iphone_set_info_LDADD    = $(COMMON_LIBS) $(LIBIMOBILEDEVICE_LIBS)
+iphone_set_info_CPPFLAGS = -DUSE_UDEV -DG_LOG_DOMAIN=\"iphone-set-info\"
 endif
 endif # HAVE_LIBIPHONE
 

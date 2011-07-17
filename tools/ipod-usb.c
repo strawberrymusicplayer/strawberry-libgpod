@@ -73,6 +73,13 @@ static gchar *get_sysinfo_extended (libusb_device_handle *handle)
         }
     }
     /*hexdump ((guchar *)sysinfo_extended->str, sysinfo_extended->len);*/
+
+    if (sysinfo_extended->len == 0) {
+        /* Nothing could be read from USB */
+        g_string_free(sysinfo_extended, TRUE);
+        return NULL;
+    }
+
     return g_string_free (sysinfo_extended, FALSE);
 }
 

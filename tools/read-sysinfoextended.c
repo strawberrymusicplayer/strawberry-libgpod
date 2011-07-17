@@ -50,14 +50,14 @@ static gboolean write_sysinfo_extended (const char *mountpoint,
         /* Make sure the device dir exists (not necessarily true on
          * Shuffles */
         if (devdirpath == NULL) {
-            gchar *itunesdirpath;
+            gchar *controldirpath;
 
-            itunesdirpath = itdb_get_itunes_dir (mountpoint);
-            if (itunesdirpath == NULL) {
+            controldirpath = itdb_get_control_dir (mountpoint);
+            if (controldirpath == NULL) {
                 return FALSE;
             }
-            devdirpath = g_build_filename (itunesdirpath, "Device", NULL);
-            g_free (itunesdirpath);
+            devdirpath = g_build_filename (controldirpath, "Device", NULL);
+            g_free (controldirpath);
             g_mkdir (devdirpath, 0777);
         }
         filename = g_build_filename (devdirpath, "SysInfoExtended", NULL);

@@ -474,6 +474,7 @@ static gboolean ipod_set_properties (ItdbBackend *backend,
 
 	if ((info == NULL) || (info->ipod_generation == ITDB_IPOD_GENERATION_UNKNOWN)) {
 		backend->set_is_unknown (backend, TRUE);
+		g_debug("unknown ipod generation");
 		return TRUE;
 	} else {
 		backend->set_is_unknown (backend, FALSE);
@@ -555,6 +556,7 @@ static gboolean mounted_ipod_set_properties (ItdbBackend *backend,
 
         itdb = itdb_parse (ipod_mountpoint, NULL);
         if (itdb == NULL) {
+               g_debug("failed to parse iTunesDB at %s", ipod_mountpoint);
                return FALSE;
         }
         control_path = itdb_get_control_dir (ipod_mountpoint);
@@ -568,6 +570,8 @@ static gboolean mounted_ipod_set_properties (ItdbBackend *backend,
 
         mpl = itdb_playlist_mpl (itdb);
         if (mpl == NULL) {
+                g_debug("corrupted iTunesDB (no master playlist) at %s",
+                        ipod_mountpoint);
                 return FALSE;
         }
 	if (mpl->name != NULL) {
@@ -586,30 +590,37 @@ static char *mount_ipod (const char *dev_path, const char *fstype)
 
         filename = g_build_filename (TMPMOUNTDIR, "ipodXXXXXX", NULL);
         if (filename == NULL) {
+                g_debug("failed to build temporary template at "TMPMOUNTDIR);
                 return NULL;
         }
         tmpname = mkdtemp (filename);
         if (tmpname == NULL) {
+                g_debug("failed to build temporary filename using template %s",
+                        filename);
                 g_free (filename);
                 return NULL;
         }
         g_assert (tmpname == filename);
         result = mount (dev_path, tmpname, fstype, 0, NULL);
         if (result != 0) {
+                g_debug("failed to mount device %s at %s: %s",
+                        dev_path, tmpname, strerror(errno));
                 g_rmdir (filename);
                 g_free (filename);
                 return NULL;
         }
+        g_debug("device successfully mounted at %s", tmpname);
 
         return tmpname;
 }
 
-static gboolean write_sysinfo_extended (const char *mountpoint, 
+static gboolean write_sysinfo_extended (const char *mountpoint,
                                         const char *data)
 {
         char *filename;
         char *devdirpath;
-        gboolean result;
+        gboolean success;
+        GError *error = { 0, };
 
         devdirpath = itdb_get_device_dir (mountpoint);
         /* Make sure the device dir exists (not necessarily true on
@@ -619,22 +630,33 @@ static gboolean write_sysinfo_extended (const char *mountpoint,
 
             itunesdirpath = itdb_get_itunes_dir (mountpoint);
             if (itunesdirpath == NULL) {
+                g_debug("failed to build path for control dir at %s",
+                        mountpoint);
                 return FALSE;
             }
             devdirpath = g_build_filename (itunesdirpath, "Device", NULL);
             g_free (itunesdirpath);
             g_mkdir (devdirpath, 0777);
+            g_debug("creating %s", devdirpath);
         }
         filename = g_build_filename (devdirpath, "SysInfoExtended", NULL);
         g_free (devdirpath);
         if (filename == NULL) {
+                g_debug("failed to build path for SysInfoExtended at %s",
+                        mountpoint);
                 return FALSE;
         }
 
-        result = g_file_set_contents (filename, data, -1, NULL);
+        success = g_file_set_contents (filename, data, -1, &error);
+        if (!success) {
+            g_debug("failed to write %s: %s", filename, error->message);
+            g_clear_error(&error);
+        } else {
+            g_debug("successfully written SysInfoExtended at %s", filename);
+        }
         g_free (filename);
 
-        return result;
+        return success;
 }
 
 
@@ -644,6 +666,8 @@ static char *get_info_from_usb (usb_bus_number, usb_device_number)
         return read_sysinfo_extended_from_usb (usb_bus_number,
                                                usb_device_number);
 #else
+	g_debug("libgpod was compiled without USB support, "
+		"not trying to read SysInfoExtended from USB");
 	return NULL;
 #endif
 }
@@ -653,6 +677,8 @@ static char *get_info_from_sg (const char *dev)
 #ifdef HAVE_SGUTILS
 	return read_sysinfo_extended (dev);
 #else
+	g_debug("libgpod was compiled without sgutils support, "
+		"not trying to read SysInfoExtended from SCSI");
 	return NULL;
 #endif
 }
@@ -665,19 +691,33 @@ int itdb_callout_set_ipod_properties (ItdbBackend *backend, const char *dev,
 	char *ipod_mountpoint = NULL;
 	char *xml = NULL;
 	SysInfoIpodProperties *props;
+	GError *error = { 0, };
 
 	if (usb_bus_number != 0) {
+		g_debug("trying to read info from USB device %d:%d",
+			usb_bus_number, usb_device_number);
 		xml = get_info_from_usb (usb_bus_number, usb_device_number);
         }
-        if (xml == NULL) {
+	if (xml == NULL) {
+		g_debug("tring to read info from SCSI device %s", dev);
 		xml = get_info_from_sg (dev);
+	} else {
+		g_debug("iPod properties successfully read from USB");
 	}
 
         if (xml == NULL) {
+                g_debug("couldn't read SysInfoExtended from device");
                 return -1;
-        }
-        props = itdb_sysinfo_extended_parse_from_xml (xml, NULL);
+        } else {
+		g_debug("iPod properties successfully read from SCSI");
+	}
+
+        props = itdb_sysinfo_extended_parse_from_xml (xml, &error);
 	if (props == NULL) {
+		g_debug("failed to parse SysInfoExtended: %s",
+			error->message);
+		g_clear_error(&error);
+		g_debug("%s", xml);
 		return -1;
 	}
 
@@ -689,7 +729,7 @@ int itdb_callout_set_ipod_properties (ItdbBackend *backend, const char *dev,
                 g_free (xml);
                 return -1;
         }
-        write_sysinfo_extended (ipod_mountpoint, xml); 
+        write_sysinfo_extended (ipod_mountpoint, xml);
         g_free (xml);
 
         /* mounted_ipod_set_properties will call itdb_parse on the ipod

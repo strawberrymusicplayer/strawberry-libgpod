@@ -324,6 +324,7 @@ static void free_image_format (Itdb_ArtworkFormat *format)
 
 void itdb_sysinfo_properties_free (SysInfoIpodProperties *props)
 {
+    g_return_if_fail (props != NULL);
     g_list_foreach (props->artwork_formats, (GFunc)free_image_format, NULL);
     g_list_free (props->artwork_formats);
     g_list_foreach (props->photo_formats, (GFunc)free_image_format, NULL);

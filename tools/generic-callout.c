@@ -677,6 +677,9 @@ int itdb_callout_set_ipod_properties (ItdbBackend *backend, const char *dev,
                 return -1;
         }
         props = itdb_sysinfo_extended_parse_from_xml (xml, NULL);
+	if (props == NULL) {
+		return -1;
+	}
 
         ipod_set_properties (backend, props);
         itdb_sysinfo_properties_free (props);

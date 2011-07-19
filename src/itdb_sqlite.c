@@ -1359,6 +1359,9 @@ leave:
     if (stmt_artist) {
 	sqlite3_finalize(stmt_artist);
     }
+    if (stmt_composer) {
+	sqlite3_finalize(stmt_composer);
+    }
     if (stmt_video_info) {
 	sqlite3_finalize(stmt_video_info);
     }

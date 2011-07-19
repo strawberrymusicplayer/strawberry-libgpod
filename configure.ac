@@ -44,6 +44,18 @@ dnl sqlite3 is needed for newer ipod models (nano5g), and libplist is needed
 dnl by libgpod sqlite code
 PKG_CHECK_MODULES(LIBGPOD, glib-2.0 >= 2.16.0 gobject-2.0 sqlite3 libplist >= 1.0 gmodule-2.0)
 
+dnl ***************************************************
+dnl g_gint64_hash and g_gint64_equal are only available
+dnl starting from glib 2.22.
+dnl ***************************************************
+saved_CFLAGS="$CFLAGS"
+saved_LIBS="$LIBS"
+CFLAGS="$LIBGPOD_CFLAGS $CFLAGS"
+LIBS="$LIBGPOD_LIBS $LIBS"
+AC_CHECK_FUNCS([g_int64_hash g_int64_equal])
+CFLAGS="$saved_CFLAGS"
+LIBS="$saved_LIBS"
+
 dnl **************************************************
 dnl * sgutils is necessary to get the xml device file
 dnl * from older ipods

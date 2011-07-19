@@ -1132,6 +1132,20 @@ static gint64 playcounts_plist_get_gint64 (GHashTable *track_dict,
     return 0;
 }
 
+#ifndef HAVE_G_INT64_EQUAL
+static gboolean g_int64_equal (gconstpointer v1, gconstpointer v2)
+{
+  return *((const gint64*) v1) == *((const gint64*) v2);
+}
+#endif
+
+#ifndef HAVE_G_INT64_HASH
+static guint g_int64_hash (gconstpointer v)
+{
+  return (guint) *(const gint64*) v;
+}
+#endif
+
 /* called by playcounts_init */
 static gboolean playcounts_plist_read (FImport *fimp, GValue *plist_data)
 {

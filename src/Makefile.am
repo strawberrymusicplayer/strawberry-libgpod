@@ -28,11 +28,6 @@ libgpod_la_SOURCES = 		\
 	rijndael.c
 
 libgpod_la_CFLAGS =
-if WITH_INTERNAL_GCHECKSUM
-libgpod_la_SOURCES += gchecksum.c gchecksum.h
-libgpod_la_CFLAGS += -DWITH_INTERNAL_GCHECKSUM
-endif
-
 libgpod_la_LDFLAGS = -version-info $(LIBGPOD_SO_VERSION) -no-undefined
 libgpod_la_CPPFLAGS = -DLIBGPOD_BLOB_DIR=\"$(LIBGPOD_BLOB_DIR)\"
 

@@ -117,6 +117,14 @@ static const unsigned char fixed[18] = {
     0x21, 0x07, 0xC1, 0xD0, 0x12, 0xB2, 0xA1, 0x07, 0x81
 };
 
+#ifndef HAVE_G_CHECKSUM_RESET
+#define g_checksum_reset(checksum)                      \
+G_STMT_START {                                          \
+    g_checksum_free(checksum);                          \
+    (checksum) = g_checksum_new (G_CHECKSUM_SHA1);      \
+} G_STMT_END
+#endif
+
 static int gcd(int a, int b){
     while (TRUE)
     {

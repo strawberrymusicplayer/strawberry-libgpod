@@ -53,6 +53,7 @@ saved_LIBS="$LIBS"
 CFLAGS="$LIBGPOD_CFLAGS $CFLAGS"
 LIBS="$LIBGPOD_LIBS $LIBS"
 AC_CHECK_FUNCS([g_int64_hash g_int64_equal])
+AC_CHECK_FUNCS([g_checksum_reset])
 CFLAGS="$saved_CFLAGS"
 LIBS="$saved_LIBS"
 

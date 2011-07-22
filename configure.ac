@@ -172,7 +172,11 @@ AC_ARG_ENABLE(udev,
               fi],
               [enable_udev=yes])
 AM_CONDITIONAL(USE_UDEV, test x"$enable_udev" = xyes)
-AC_SUBST([udevdir], [/lib/udev])
+udevdir="/lib/udev"
+AC_ARG_WITH([udev-dir],
+            AS_HELP_STRING([--with-udev-dir=DIR],[Directory where udev expects helper programs to be located]),
+            [udevdir="$with_udev_dir"])
+AC_SUBST([udevdir], [$udevdir])
 
 dnl ***********************************************************************
 dnl * for the udev and hal callouts, we need a temporary directory to

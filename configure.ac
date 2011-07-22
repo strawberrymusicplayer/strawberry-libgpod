@@ -161,16 +161,16 @@ AM_CONDITIONAL(HAVE_LIBIMOBILEDEVICE, test x"$enable_libimobiledevice" = xyes)
 dnl ***********************************************************************
 dnl * udev can be used to run a callout as an alternative to the hal callout
 dnl * nowadays (2009), it's the recommended way of having callouts, so
-dnl * it should be preferred over HAL
+dnl * it should be preferred over HAL, and it's enabled by default.
 dnl ***********************************************************************
 AC_ARG_ENABLE(udev,
              [AS_HELP_STRING([--enable-udev],[Enable udev callout])],
-             [if test $enableval = "yes" ; then
-                 enable_udev=yes
+             [if test x"$enableval" = "xno" ; then
+                 enable_udev=no
               else
-                enable_udev=no
+                 enable_udev=yes
               fi],
-              [enable_udev=no])
+              [enable_udev=yes])
 AM_CONDITIONAL(USE_UDEV, test x"$enable_udev" = xyes)
 AC_SUBST([udevdir], [/lib/udev])
 

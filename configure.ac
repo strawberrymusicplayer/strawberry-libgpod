@@ -107,12 +107,11 @@ AC_SUBST(Z_LIBS)
 AM_CONDITIONAL(HAVE_ZLIB, test x"$have_zlib" = xyes)
 
 dnl ***********************************************************************
-dnl * HAL is optional, but is required if you want things to "just work"
-dnl * when a recent iPod is plugged in
-dnl * libgpod by itself doesn't use HAL at all, HAL is just used to build a 
-dnl * helper program which is then installed as a HAL callout
+dnl * HAL used to be required for iPod hotplug to "just work". However, it
+dnl * has been deprecated in favour of udev-based code, so it's now
+dnl * disabled by default.
 dnl ***********************************************************************
-AC_ARG_WITH(hal, AS_HELP_STRING([--without-hal],[Disable HAL support]))
+AC_ARG_WITH(hal, AS_HELP_STRING([--with-hal],[Enable HAL support]),, [with_hal=no])
 
 hal_callouts_dir="`$PKG_CONFIG --variable libdir hal`/hal/scripts"
 AC_ARG_WITH(hal_callouts_dir, AS_HELP_STRING([--with-hal-callouts-dir=DIR],[Directory where HAL expects its callout scripts to be located]),,
@@ -126,7 +125,7 @@ AC_ARG_WITH(hal_fdi_dir, AS_HELP_STRING([--with-hal-fdi-dir=DIR],[Directory wher
 HALFDIDIR="$with_hal_fdi_dir"
 AC_SUBST(HALFDIDIR)
 
-if test "x$with_hal" != "xno"; then
+if test "x$with_hal" = "xyes"; then
   PKG_CHECK_MODULES(HAL, hal >= 0.5 hal < 0.6, enable_hal=yes, enable_hal=no)
   if test "x$enable_hal" != "xyes" -a "x$with_hal" = "xyes"; then
       AC_MSG_ERROR([HAL support explicitly requested but HAL couldn't be found])

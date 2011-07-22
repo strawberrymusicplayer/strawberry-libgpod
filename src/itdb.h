@@ -411,7 +411,7 @@ typedef enum {
     ITDB_LIMITSORT_MOST_RECENTLY_PLAYED = 0x15,
     ITDB_LIMITSORT_LEAST_RECENTLY_PLAYED = 0x80000015,/* See note above */
     ITDB_LIMITSORT_HIGHEST_RATING = 0x17,
-    ITDB_LIMITSORT_LOWEST_RATING = 0x80000017,        /* See note above */
+    ITDB_LIMITSORT_LOWEST_RATING = 0x80000017         /* See note above */
 } ItdbLimitSort;
 
 /**
@@ -502,7 +502,7 @@ typedef enum {
     ITDB_SPLACTION_IS_NOT = 0x03000001,
     ITDB_SPLACTION_DOES_NOT_CONTAIN = 0x03000002,
     ITDB_SPLACTION_DOES_NOT_START_WITH = 0x03000004,
-    ITDB_SPLACTION_DOES_NOT_END_WITH = 0x03000008,
+    ITDB_SPLACTION_DOES_NOT_END_WITH = 0x03000008
 } ItdbSPLAction;
 
 /**
@@ -579,7 +579,7 @@ typedef enum
 typedef enum {
     ITDB_SPLACTION_LAST_DAYS_VALUE = 86400,    /* nr of secs in 24 hours */
     ITDB_SPLACTION_LAST_WEEKS_VALUE = 604800,  /* nr of secs in 7 days   */
-    ITDB_SPLACTION_LAST_MONTHS_VALUE = 2628000,/* nr of secs in 30.4167
+    ITDB_SPLACTION_LAST_MONTHS_VALUE = 2628000 /* nr of secs in 30.4167
 						  days ~= 1 month */
 } ItdbSPLActionLast;
 

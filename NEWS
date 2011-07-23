@@ -1,3 +1,23 @@
+Overview of changes in libgpod 0.8.2
+====================================
+
+iPhone 4/iPod Touch 4/iPad/Nano 6g are still unsupported in this release.
+However, libgpod now has a mechanism to dynamically load
+a module named $libdir/libgpod/libhashab.so. This will be useful to
+easily enable support for these devices if someone comes up with a
+way to compute the music database checksum.
+
+* fix mono binding on 32 bit systems (Christian Krause)
+* better iOS 4.3 support (Martin Szulecki, Nikias Bassen)
+* dynamic loader for libhashab.so (Nikias Bassen)
+* make smartplaylists case-insensitive to match what iTunes does
+* (Christophe Fergeau)
+* more robust Shuffle support in udev helper (Christophe Fergeau)
+* various compilation fixes and build system improvements (Alexander
+  Weinert, Bastien Nocera, Christophe Fergeau)
+* bug fixes (phantomjinx, James Burton, Christophe Fergeau)
+* updated French translation (Éric Lassauge)
+
 Overview of changes in libgpod 0.8.0
 ====================================
 

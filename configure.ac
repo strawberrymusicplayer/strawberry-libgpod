@@ -1,5 +1,5 @@
 AC_PREREQ(2.65)
-AC_INIT([libgpod], [0.8.0])
+AC_INIT([libgpod], [0.8.2])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -11,7 +11,7 @@ dnl libtool versioning
 #                 changes to the signature and the semantic)
 #  ? :+1 : ?   == just internal changes
 # CURRENT : REVISION : AGE
-LIBGPOD_SO_VERSION=7:1:3
+LIBGPOD_SO_VERSION=7:2:3
 AC_SUBST(LIBGPOD_SO_VERSION)
 
 AM_INIT_AUTOMAKE([dist-bzip2 no-dist-gzip])

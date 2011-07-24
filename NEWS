@@ -6,6 +6,8 @@ However, libgpod now has a mechanism to dynamically load
 a module named $libdir/libgpod/libhashab.so. This will be useful to
 easily enable support for these devices if someone comes up with a
 way to compute the music database checksum.
+The udev helper is now built by default, and the HAL callout is no longer
+built by default, use --enable-udev/--with-hal if you need ot change that.
 
 * fix mono binding on 32 bit systems (Christian Krause)
 * better iOS 4.3 support (Martin Szulecki, Nikias Bassen)

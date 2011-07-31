@@ -120,7 +120,7 @@ msgstr "Nano (bianco)"
 
 #: ../src/itdb_device.c:370
 msgid "Nano (Black)"
-msgstr "Nano (Nero)"
+msgstr "Nano (nero)"
 
 #: ../src/itdb_device.c:371
 msgid "Video (White)"

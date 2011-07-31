@@ -128,7 +128,7 @@ static gboolean write_hash_info (const Itdb_Device *device,
     gboolean success;
     const char header[] = "HASHv0";
 
-    memcpy (hash_info.header, header, sizeof (header));
+    memcpy (hash_info.header, header, sizeof (hash_info.header));
     success = itdb_device_get_hex_uuid (device, hash_info.uuid);
     if (!success) {
 	return FALSE;

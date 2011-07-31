@@ -97,6 +97,7 @@ bindings/mono/libgpod-sharp/libgpod-sharp.pidb
 /po/Makefile.in.in
 /po/POTFILES
 /po/*.gmo
+/po/*.mo
 /po/stamp-it
 
 # /tests/
@@ -114,6 +115,8 @@ bindings/mono/libgpod-sharp/libgpod-sharp.pidb
 /tests/test-write-thumbnails
 
 # /tools/
+/tools/90-libgpod.rules
 /tools/ipod-read-sysinfo-extended
+/tools/ipod-set-info
 /tools/ipod-time-sync
 /tools/libgpod-callout

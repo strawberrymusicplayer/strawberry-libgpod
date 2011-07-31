@@ -1669,7 +1669,7 @@ const gchar *itdb_info_get_ipod_model_name_string (Itdb_IpodModel model)
        verify if @model is valid */
     while (ipod_model_name_table[i])
     {
-	if (i==model)  return gettext (ipod_model_name_table[i]);
+	if (i==model)  return _(ipod_model_name_table[i]);
 	++i;
     }
     return NULL;
@@ -1697,7 +1697,7 @@ const gchar *itdb_info_get_ipod_generation_string (Itdb_IpodGeneration generatio
     while (ipod_generation_name_table[i])
     {
 	if (i==generation)
-	    return gettext (ipod_generation_name_table[i]);
+	    return _(ipod_generation_name_table[i]);
 	++i;
     }
     return NULL;

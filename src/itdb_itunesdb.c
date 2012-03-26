@@ -1997,7 +1997,6 @@ static glong find_next_a_in_b (FContents *cts,
     if (cts->error) return -1;
 
     offset = start_seek - b_seek;
-    len = 0;
     do
     {   /* skip headers inside the b hunk (b_len) until we find header
 	   @a */
@@ -2392,7 +2391,7 @@ static glong get_playlist (FImport *fimp, guint mhsd_type, glong mhyp_seek)
 
   mhip_seek = mhod_seek;
 
-  i=0; /* tracks read */
+  /* tracks read */
   for (i=0; i < mhipnum; ++i)
   {
       mhip_seek = get_mhip (fimp, mhip_seek);

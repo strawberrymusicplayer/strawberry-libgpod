@@ -420,10 +420,11 @@ static void itdb_fsync (void)
 gchar * itdb_resolve_path (const gchar *root,
 			   const gchar * const * components)
 {
-  gchar *good_path = g_strdup(root);
+  gchar *good_path;
   guint32 i;
 
   if (!root) return NULL;
+  good_path = g_strdup (root);
 
   for(i = 0 ; components[i] ; i++) {
     GDir *cur_dir;
@@ -975,12 +976,13 @@ static gboolean playcounts_read (FImport *fimp, FContents *cts)
     for (i=0; i<entry_num; ++i)
     {
 	guint32 mac_time;
-	struct playcount *playcount = g_new0 (struct playcount, 1);
+	struct playcount *playcount;
 	glong seek = header_length + i*entry_length;
 
 	check_seek (cts, seek, entry_length);
 	CHECK_ERROR (fimp, FALSE);	
 
+	playcount = g_new0 (struct playcount, 1);
 	playcounts = g_list_prepend (playcounts, playcount);
 	playcount->playcount = get32lint (cts, seek);	
 	mac_time = get32lint (cts, seek+4);

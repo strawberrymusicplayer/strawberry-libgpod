@@ -252,15 +252,15 @@ int main (int argc, char **argv)
 	}
 	g_type_init ();
 
-	backend = udev_backend_new ();
-        if (backend == NULL) {
-                return -1;
-        }
-
         fstype = g_getenv ("ID_FS_TYPE");
         if (fstype == NULL) {
                 return -1;
         }
+
+	backend = udev_backend_new ();
+	if (backend == NULL) {
+		return -1;
+	}
 
         usb_bus_number = atoi (argv[2]);
         usb_dev_number = atoi (argv[3]);

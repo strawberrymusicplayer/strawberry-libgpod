@@ -67,7 +67,7 @@ static gboolean haystack (gchar *filetype, gchar **desclist)
 static void itdb_track_set_defaults (Itdb_Track *tr)
 {
     gchar *mp3_desc[] = {"MPEG", "MP3", "mpeg", "mp3", NULL};
-    gchar *mp4_desc[] = {"AAC", "MP4", "aac", "mp4", NULL};
+    gchar *mp4_desc[] = {"AAC", "MP4", "M4A", "aac", "mp4", "m4a", NULL};
     gchar *audible_subdesc[] = {"Audible", "audible", "Book", "book", NULL};
     gchar *wav_desc[] = {"WAV", "wav", NULL};
     gchar *m4v_desc[] = {"M4V", "MP4", "MP4V", "m4v", "mp4", "mp4v", NULL};

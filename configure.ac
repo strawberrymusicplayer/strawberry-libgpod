@@ -164,7 +164,7 @@ dnl * nowadays (2009), it's the recommended way of having callouts, so
 dnl * it should be preferred over HAL, and it's enabled by default.
 dnl ***********************************************************************
 AC_ARG_ENABLE(udev,
-             [AS_HELP_STRING([--enable-udev],[Enable udev callout])],
+             [AS_HELP_STRING([--disable-udev],[Disable udev callout])],
              [if test x"$enableval" = "xno" ; then
                  enable_udev=no
               else

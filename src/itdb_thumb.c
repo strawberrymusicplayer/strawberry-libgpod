@@ -374,7 +374,7 @@ const GList *itdb_thumb_ipod_get_thumbs (Itdb_Thumb_Ipod *thumbs)
  * GDK_PIXBUF() yourself.
  * </note>
  *
- * Returns: a #GdkPixbuf that must be unreffed with gdk_pixbuf_unref()
+ * Returns: a #GdkPixbuf that must be unreffed with g_object_unref()
  * after use, or NULL if the creation of the gdk-pixbuf failed or if
  * libgpod was compiled without gdk-pixbuf support.
  *
@@ -547,7 +547,7 @@ static GList *itdb_thumb_ipod_to_pixbufs (Itdb_Device *device,
  *
  * Returns: a #GList of #GdkPixbuf which are associated with @thumb, NULL
  * if the pixbuf was invalid or if libgpod is compiled without gdk-pixbuf
- * support. The #GdkPixbuf must be unreffed with gdk_pixbuf_unref() after use
+ * support. The #GdkPixbuf must be unreffed with g_object_unref() after use
  * and the #GList must be freed with g_list_free().
  *
  * Since: 0.7.0

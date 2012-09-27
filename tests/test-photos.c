@@ -81,7 +81,7 @@ dump_thumbs (Itdb_PhotoDB *db, Itdb_Artwork *artwork,
 		path = g_build_filename (dir, filename, NULL);
 		g_free (filename);
 		gdk_pixbuf_save (pixbuf, path, "png", NULL, NULL);
-		gdk_pixbuf_unref (pixbuf);
+		g_object_unref (pixbuf);
 		g_free (path);
 	}
         g_list_free (thumbnails);

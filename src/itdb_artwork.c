@@ -849,7 +849,7 @@ gpointer itdb_thumb_ipod_item_to_pixbuf (Itdb_Device *device,
 				      NULL);
 
 	/* !! do not g_free(pixels) here: it will be freed when doing a
-	 * gdk_pixbuf_unref() on the GdkPixbuf !! */
+	 * g_object_unref() on the GdkPixbuf !! */
 
 	/* Remove padding from the pixmap and/or cut the pixmap to the
 	   right size. */
@@ -882,8 +882,8 @@ gpointer itdb_thumb_ipod_item_to_pixbuf (Itdb_Device *device,
 					       pad_x, pad_y,
 					       width, height);
 	pixbuf = gdk_pixbuf_copy (pixbuf_sub);
-	gdk_pixbuf_unref (pixbuf_full);
-	gdk_pixbuf_unref (pixbuf_sub);
+	g_object_unref (pixbuf_full);
+	g_object_unref (pixbuf_sub);
 
         return pixbuf;
 }

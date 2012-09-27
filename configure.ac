@@ -192,7 +192,7 @@ AH_TEMPLATE([TMPMOUNTDIR], [Directory where HAL/udev will create a sub-directory
 AC_DEFINE_UNQUOTED(TMPMOUNTDIR, "$with_temp_mount_dir", [Directory where HAL/udev will create a sub-directory to mount iPods])
 
 dnl ***********************************************************************
-dnl * provide a $l{ibdir}/libgpod directory for external modules
+dnl * provide a ${libdir}/libgpod directory for external modules
 dnl ***********************************************************************
 AC_ARG_WITH(libgpod-blob-dir, [AC_HELP_STRING([--with-libgpod-blob-dir=PATH],
                                               [Load libgpod binary blobs from this directory [LIBDIR/libgpod]])],

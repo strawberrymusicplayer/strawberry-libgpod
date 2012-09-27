@@ -55,7 +55,10 @@ main (int argc, char *argv[])
 
   if (infile == 0)
   {
-      printf ("Usage: %s <infile> [<outfile>]\n",  g_basename(argv[0]));
+      char *basename = g_path_get_basename(argv[0]);
+      printf ("Usage: %s <infile> [<outfile>]\n", basename);
+      g_free(basename);
+
       exit (0);
   }
 

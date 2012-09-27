@@ -78,8 +78,10 @@ main (int argc, char **argv)
     char *xml;
     
     if (argc < 3) {
-      g_print (_("usage: %s <device|uuid|bus device> <mountpoint>\n"), g_basename (argv[0]));
-	return 1;
+      char *basename = g_path_get_basename (argv[0]);
+      g_print (_("usage: %s <device|uuid|bus device> <mountpoint>\n"), basename);
+      g_free (basename);
+      return 1;
     }
 
     xml = NULL;

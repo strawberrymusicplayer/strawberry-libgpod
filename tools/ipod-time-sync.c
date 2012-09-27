@@ -34,8 +34,10 @@ int
 main (int argc, char **argv)
 {
     if (argc < 2) {
-        g_print (_("usage: %s <device> [timezone]\n"), g_basename (argv[0]));
-	return 1;
+        char *basename = g_path_get_basename (argv[0]);
+        g_print (_("usage: %s <device> [timezone]\n"), basename);
+        g_free (basename);
+        return 1;
     }
 
     sync_time (argv[1], NULL);

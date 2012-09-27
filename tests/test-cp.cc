@@ -108,8 +108,10 @@ int main (int argc, char **argv)
 	GError *error;
 
 	if (argc != 3) {
+		char *basename = g_path_get_basename(argv[0]);
 		g_print ("Usage:\n");
-		g_print ("%s <filename> <mountpoint> \n", g_basename (argv[0]));
+		g_print ("%s <filename> <mountpoint> \n", basename);
+		g_free (basename);
 		exit (1);
 	}
 

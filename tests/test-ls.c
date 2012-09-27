@@ -118,10 +118,12 @@ main (int argc, char *argv[])
  
   if (mountpoint == NULL)
   {
+      char *basename = g_path_get_basename (argv[0]);
       g_print ("Usage: %s <mountpoint>|-l [<playlistname>]\n\n"
                "-l - List from the local repository (~" LOCALDB ")\n"
-	       "<playlistname> - name of the playlist to list (optional)\n",  
-                g_basename(argv[0]));
+               "<playlistname> - name of the playlist to list (optional)\n",
+               basename);
+      g_free (basename);
       exit (0);
   }
 

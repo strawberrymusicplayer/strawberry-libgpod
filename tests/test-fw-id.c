@@ -42,7 +42,9 @@ main (int argc, char *argv[])
     char *fwid;
 
     if (argc < 2) {
-        g_print ("Usage: %s <mountpoint>\n", g_basename (argv[0]));
+        char *basename = g_path_get_basename(argv[0]);
+        g_print ("Usage: %s <mountpoint>\n", basename);
+        g_free (basename);
         return 1;
 
     }

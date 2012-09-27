@@ -53,7 +53,7 @@ save_itdb_thumb (Itdb_Track *track, GdkPixbuf *pixbuf, guint id)
         }
         g_print ("  %s\n", filename);
         gdk_pixbuf_save (pixbuf, filename, "png", NULL, NULL);
-        gdk_pixbuf_unref (pixbuf);
+        g_object_unref (pixbuf);
         /*		g_print ("Saved %s\n", filename); */
         g_free (filename);
 }

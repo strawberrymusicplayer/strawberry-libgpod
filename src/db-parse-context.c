@@ -40,6 +40,10 @@
 #include "db-itunes-parser.h"
 #include "itdb_endianness.h"
 
+#ifndef HAVE_G_MAPPED_FILE_UNREF
+#define g_mapped_file_unref(f) g_mapped_file_free(f)
+#endif
+
 DBParseContext *
 db_parse_context_new (const unsigned char *buffer, off_t len, guint byte_order)
 {

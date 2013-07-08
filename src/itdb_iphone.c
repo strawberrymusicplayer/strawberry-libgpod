@@ -44,6 +44,18 @@ static int itdb_iphone_post_notification(idevice_t device,
 					 const char *notification)
 {
     np_client_t np = NULL;
+
+#ifdef HAVE_LIBIMOBILEDEVICE_1_1_5
+    lockdownd_service_descriptor_t service = NULL;
+
+    lockdownd_start_service(client, "com.apple.mobile.notification_proxy", &service);
+    if (!service || !service->port) {
+	fprintf(stderr, "notification_proxy could not be started!\n");
+	return -1;
+    }
+
+    np_client_new(device, service, &np);
+#else
     uint16_t nport = 0;
 
     lockdownd_start_service(client, "com.apple.mobile.notification_proxy", &nport);
@@ -53,6 +65,8 @@ static int itdb_iphone_post_notification(idevice_t device,
     }
 
     np_client_new(device, nport, &np);
+#endif
+
     if(!np) {
 	fprintf(stderr, "connection to notification_proxy failed!\n");
 	return -1;
@@ -75,7 +89,11 @@ int itdb_iphone_start_sync(Itdb_Device *device, void **prepdata)
     itdbprep_t pdata_loc = NULL;
     const char *uuid;
     lockdownd_client_t client = NULL;
+#ifdef HAVE_LIBIMOBILEDEVICE_1_1_5
+    lockdownd_service_descriptor_t service = NULL;
+#else
     uint16_t afcport = 0;
+#endif
     int i;
 
     uuid = itdb_device_get_uuid (device);
@@ -96,12 +114,22 @@ int itdb_iphone_start_sync(Itdb_Device *device, void **prepdata)
 	res = -ENODEV;
 	goto leave_with_err;
     }
+
     if (LOCKDOWN_E_SUCCESS != lockdownd_client_new_with_handshake(pdata_loc->device, &client, "libgpod")) {
 	fprintf(stderr, "Error: Could not establish lockdownd connection!\n");
 	res = -1;
 	goto leave_with_err;
     }
 
+#ifdef HAVE_LIBIMOBILEDEVICE_1_1_5
+    lockdownd_start_service(client, "com.apple.afc", &service);
+    if (!service || !service->port) {
+	fprintf(stderr, "Error: Could not start AFC service!\n");
+	res = -1;
+	goto leave_with_err;
+    }
+    afc_client_new(pdata_loc->device, service, &pdata_loc->afc);
+#else
     lockdownd_start_service(client, "com.apple.afc", &afcport);
     if (!afcport) {
 	fprintf(stderr, "Error: Could not start AFC service!\n");
@@ -109,6 +137,7 @@ int itdb_iphone_start_sync(Itdb_Device *device, void **prepdata)
 	goto leave_with_err;
     }
     afc_client_new(pdata_loc->device, afcport, &pdata_loc->afc);
+#endif
     if (!pdata_loc->afc) {
 	fprintf(stderr, "Error: Could not start AFC client!\n");
 	res = -1;

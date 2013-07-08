@@ -133,7 +133,11 @@ iphone_write_sysinfo_extended (const char *uuid, const char *xml)
 	afc_client_t afc = NULL;
 	idevice_error_t ret = IDEVICE_E_UNKNOWN_ERROR;
 	afc_error_t afc_ret;
+#ifdef HAVE_LIBIMOBILEDEVICE_1_1_5
+	lockdownd_service_descriptor_t service;
+#else
 	uint16_t afcport = 0;
+#endif
 	uint64_t handle;
 	uint32_t bytes_written;
 	const char device_dir[] = "/iTunes_Control/Device";
@@ -150,6 +154,19 @@ iphone_write_sysinfo_extended (const char *uuid, const char *xml)
 		return FALSE;
 	}
 
+#ifdef HAVE_LIBIMOBILEDEVICE_1_1_5
+	if (LOCKDOWN_E_SUCCESS != lockdownd_start_service(client, "com.apple.afc", &service)) {
+		lockdownd_client_free(client);
+		idevice_free(device);
+		return FALSE;
+	}
+	g_assert ((service != NULL) && (service->port != 0));
+	if (AFC_E_SUCCESS != afc_client_new(device, service, &afc)) {
+		lockdownd_client_free(client);
+		idevice_free(device);
+		return FALSE;
+	}
+#else
 	if (LOCKDOWN_E_SUCCESS != lockdownd_start_service(client, "com.apple.afc", &afcport)) {
 		lockdownd_client_free(client);
 		idevice_free(device);
@@ -161,6 +178,7 @@ iphone_write_sysinfo_extended (const char *uuid, const char *xml)
 		idevice_free(device);
 		return FALSE;
 	}
+#endif
 	afc_ret = afc_make_directory(afc, device_dir);
 	if ((AFC_E_SUCCESS != afc_ret) && (AFC_E_OBJECT_EXISTS != afc_ret)) {
 		afc_client_free(afc);

@@ -154,6 +154,9 @@ if test "x$with_libimobiledevice" != "xno"; then
   if test "x$enable_libimobiledevice" = "xyes"; then
       LIBIMOBILEDEVICE_REQ="libimobiledevice-1.0"
       AC_DEFINE(HAVE_LIBIMOBILEDEVICE, 1, [Define if you have libimobiledevice support])
+      PKG_CHECK_EXISTS(libimobiledevice-1.0 >= 1.1.5,
+                       [AC_DEFINE(HAVE_LIBIMOBILEDEVICE_1_1_5, 1,
+                                  [Define to 1 if libimobiledevice-1.1.5 found])])
   fi
 fi
 AC_SUBST(LIBIMOBILEDEVICE_REQ)

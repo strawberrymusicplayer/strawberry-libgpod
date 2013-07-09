@@ -1155,7 +1155,7 @@ static gboolean playcounts_plist_read (FImport *fimp, GValue *plist_data)
     struct playcount *playcount;
     GHashTable *pc_dict, *track_dict;
     GValue *to_parse;
-    GValueArray *array;
+    GArray *array;
     gint i;
     guint32 mac_time;
     guint64 *dbid;
@@ -1167,19 +1167,19 @@ static gboolean playcounts_plist_read (FImport *fimp, GValue *plist_data)
     if (to_parse == NULL) {
         return FALSE;
     }
-    if (!G_VALUE_HOLDS (to_parse, G_TYPE_VALUE_ARRAY)) {
+    if (!G_VALUE_HOLDS (to_parse, G_TYPE_ARRAY)) {
         return FALSE;
     }
 
     playcounts = g_hash_table_new_full (g_int64_hash, g_int64_equal, g_free, g_free);
 
-    array = (GValueArray*)g_value_get_boxed (to_parse);
-    for (i = 0; i < array->n_values; i++) {
-       if (!G_VALUE_HOLDS (g_value_array_get_nth (array, i), G_TYPE_HASH_TABLE)) {
+    array = (GArray*)g_value_get_boxed (to_parse);
+    for (i = 0; i < array->len; i++) {
+       if (!G_VALUE_HOLDS (g_array_index (array, GValue *, i), G_TYPE_HASH_TABLE)) {
           continue;
        }
 
-       track_dict = g_value_get_boxed (g_value_array_get_nth (array, i));
+       track_dict = g_value_get_boxed (g_array_index (array, GValue *, i));
        if (track_dict == NULL)
            continue;
 

@@ -40,7 +40,7 @@
  *      - <integer> => G_TYPE_INT64 (gint64)
  *      - <true/>, <false/> => G_TYPE_BOOLEAN (gboolean)
  *      - <data> => G_TYPE_GSTRING (GString *)
- *      - <array> => G_TYPE_VALUE_ARRAY (GValueArray *)
+ *      - <array> => G_TYPE_ARRAY (GArray *)
  *      - <dict> => G_TYPE_HASH_TABLE (GHashTable *)
  */
 #ifdef HAVE_CONFIG_H
@@ -266,7 +266,7 @@ parse_dict (xmlNode *a_node, GError **error)
 
     return value;
 }
-	
+
 typedef GValue *(*ParseCallback) (xmlNode *, GError **);
 static ParseCallback get_parser_for_type (const xmlChar *type);
 
@@ -275,17 +275,17 @@ parse_array (xmlNode *a_node, GError **error)
 {
     xmlNode *cur_node = a_node->children;
     GValue *value;
-    GValueArray *array;
+    GArray *array;
 
-    array = g_value_array_new (4);
+    array = g_array_new (FALSE, TRUE, sizeof(GValue));
+    g_array_set_clear_func (array, (GDestroyNotify)g_value_unset);
 
     while (cur_node != NULL) {
 	if (get_parser_for_type (cur_node->name) != NULL) {
-   	    GValue *cur_value;
+	    GValue *cur_value;
 	    cur_value = parse_node (cur_node, error);
 	    if (cur_value != NULL) {
-	        array = g_value_array_append (array, cur_value);
-		g_value_unset (cur_value);
+		array = g_array_append_vals (array, cur_value, 1);
 		g_free (cur_value);
 	    }
 	}
@@ -298,11 +298,11 @@ parse_array (xmlNode *a_node, GError **error)
     }
 
     if ((error != NULL) && (*error != NULL)) {
-	g_value_array_free (array);
+	g_array_unref (array);
         return NULL;
     }
     value = g_new0 (GValue, 1);
-    value = g_value_init (value, G_TYPE_VALUE_ARRAY);
+    value = g_value_init (value, G_TYPE_ARRAY);
     g_value_take_boxed (value, array);
 
     return value;

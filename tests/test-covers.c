@@ -112,7 +112,9 @@ main (int argc, char **argv)
 	}
 	
 	setlocale (LC_ALL, "");
+#if !GLIB_CHECK_VERSION(2, 36, 0)
 	g_type_init ();
+#endif
 	db = itdb_parse (argv[1], NULL);
 	if (db == NULL) {
 		g_print ("Error reading iPod database\n");

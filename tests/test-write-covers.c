@@ -80,7 +80,9 @@ main (int argc, char **argv)
 	}
 	
 	setlocale (LC_ALL, "");
+#if !GLIB_CHECK_VERSION(2, 36, 0)
 	g_type_init ();
+#endif
 	covers = get_cover_list (argv[2]);
 	if (covers == NULL) {
 		g_print ("Error, %s should be a directory containing pictures\n", argv[2]);

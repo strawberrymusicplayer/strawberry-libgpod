@@ -53,7 +53,9 @@ main (int argc, char **argv)
         return 1;
     }
     setlocale (LC_ALL, "");
+#if !GLIB_CHECK_VERSION(2, 36, 0)
     g_type_init ();
+#endif
 
     if (argc == 3)
     {

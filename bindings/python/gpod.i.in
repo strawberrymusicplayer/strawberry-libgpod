@@ -286,7 +286,9 @@ PyObject* sw_get_photo(GList *list, gint index) {
 %init %{
 #ifdef HAVE_GDKPIXBUF
 #ifdef HAVE_PYGOBJECT
+#if !GLIB_CHECK_VERSION(2, 36, 0)
    g_type_init ();
+#endif
    init_pygobject ();
 #endif
 #endif

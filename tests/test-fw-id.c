@@ -48,8 +48,10 @@ main (int argc, char *argv[])
         return 1;
 
     }
- 
+
+#if !GLIB_CHECK_VERSION(2, 36, 0)
     g_type_init ();
+#endif
 
     device = itdb_device_new ();
     if (device == NULL) {

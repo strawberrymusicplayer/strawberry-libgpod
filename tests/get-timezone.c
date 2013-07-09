@@ -23,7 +23,9 @@ int main (int argc, char **argv)
     char *mountpoint;
     Itdb_Device *device;
 
-    g_type_init();
+#if !GLIB_CHECK_VERSION(2, 36, 0)
+    g_type_init ();
+#endif
 
     if (argc >= 2) {
         mountpoint = argv[1];

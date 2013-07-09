@@ -10,7 +10,9 @@ int main (int argc, char **argv)
     if (argc != 2)
         return(1);
 
+#if !GLIB_CHECK_VERSION(2, 36, 0)
     g_type_init ();
+#endif
     props = itdb_sysinfo_extended_parse (argv[1], &error);
     if (props == NULL) {
         g_print ("Couldn't parse %s: %s\n", argv[1], error->message);

@@ -250,7 +250,9 @@ int main (int argc, char **argv)
 	if (argc != 4) {
 		return -1;
 	}
+#if !GLIB_CHECK_VERSION(2, 36, 0)
 	g_type_init ();
+#endif
 
         fstype = g_getenv ("ID_FS_TYPE");
         if (fstype == NULL) {

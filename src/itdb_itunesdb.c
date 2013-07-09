@@ -1470,10 +1470,14 @@ guint32 itdb_tracks_number_nontransferred (Itdb_iTunesDB *itdb)
  */
 Itdb_iTunesDB *itdb_new (void)
 {
-    static GOnce g_type_init_once = G_ONCE_INIT;
     Itdb_iTunesDB *itdb;
 
+#if !GLIB_CHECK_VERSION(2, 36, 0)
+    /* g_type_init() is obsolete with newer glib versions */
+    static GOnce g_type_init_once = G_ONCE_INIT;
     g_once (&g_type_init_once, (GThreadFunc)g_type_init, NULL);
+#endif
+
     itdb = g_new0 (Itdb_iTunesDB, 1);
     itdb->priv = g_new0 (Itdb_iTunesDB_Private, 1);
     itdb->device = itdb_device_new ();

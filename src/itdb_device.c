@@ -717,7 +717,7 @@ static const ItdbSerialToModel serial_to_model_mapping[] = {
     { "SZT", "A005" },
     { "TJT", "A099" },
     { "TJU", "A099" },
-    { "TK2", "A107" },
+    { "TK2", "A107" }, /* 4GB Black Nano 1g */
     { "TK3", "A107" },
     { "VQ5", "A477" },
     { "VQ6", "A477" },

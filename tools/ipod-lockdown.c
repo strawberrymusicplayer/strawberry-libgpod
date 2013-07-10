@@ -73,11 +73,22 @@ read_sysinfo_extended_by_uuid (const char *uuid)
 	}
 
 	/* run query and get format plist */
-	lockdownd_get_value(client, NULL, NULL, &global);
-	lockdownd_get_value(client, "com.apple.mobile.iTunes", NULL, &value);
+	if (LOCKDOWN_E_SUCCESS != lockdownd_get_value(client, NULL, NULL, &global)) {
+		printf("Could not get global domain plist\n");
+		goto error;
+	}
+	if (LOCKDOWN_E_SUCCESS != lockdownd_get_value(client, "com.apple.mobile.iTunes",
+						      NULL, &value)) {
+		printf("Could not get 'com.apple.mobile.iTunes' domain plist\n");
+		goto error;
+	}
 	
 	/* add some required values manually to emulate old plist format */
 	ptr = plist_dict_get_item(global, "SerialNumber");
+	if (ptr == NULL) {
+		printf("Global domain has no 'SerialNumber' key\n");
+		goto error;
+	}
 	plist_get_string_val(ptr, &str);
 	if (str != NULL) {
 	    ptr = plist_new_string(str);
@@ -86,6 +97,10 @@ read_sysinfo_extended_by_uuid (const char *uuid)
 	}
 
 	ptr = plist_dict_get_item(global, "ProductVersion");
+	if (ptr == NULL) {
+		printf("Global domain has no 'ProductVersion' key\n");
+		goto error;
+	}
 	plist_get_string_val(ptr, &str);
 	if (str != NULL) {
 	    ptr = plist_new_string(str);

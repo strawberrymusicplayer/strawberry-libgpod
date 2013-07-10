@@ -26,12 +26,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include <glib.h>
 #include <libxml/xmlmemory.h>
 
 #include <libimobiledevice/afc.h>
 #include <libimobiledevice/libimobiledevice.h>
 #include <libimobiledevice/lockdown.h>
+
+#include "itdb-syslog.h"
 
 extern char *read_sysinfo_extended_by_uuid (const char *uuid);
 extern gboolean iphone_write_sysinfo_extended (const char *uuid, const char *xml);
@@ -42,6 +45,7 @@ read_sysinfo_extended_by_uuid (const char *uuid)
 	lockdownd_client_t client = NULL;
 	idevice_t device = NULL;
 	idevice_error_t ret = IDEVICE_E_UNKNOWN_ERROR;
+	lockdownd_error_t lockdown_ret;
 	char *xml = NULL; char *str = NULL;
 	char *gxml = NULL;
 	uint32_t xml_length = 0;
@@ -63,30 +67,34 @@ read_sysinfo_extended_by_uuid (const char *uuid)
 		g_usleep (G_USEC_PER_SEC / 2);
 	}
 	if (ret != IDEVICE_E_SUCCESS) {
-		printf("No device found with uuid %s, is it plugged in?\n", uuid);
+		itdb_syslog("No device found with uuid %s, is it plugged in?\n", uuid);
 		goto error;
 	}
 
-	if (LOCKDOWN_E_SUCCESS != lockdownd_client_new_with_handshake(device, &client, "libgpod")) {
-		printf("Client creation/handshake failed\n");
+	lockdown_ret = lockdownd_client_new_with_handshake(device, &client, "libgpod");
+	if (lockdown_ret != LOCKDOWN_E_SUCCESS) {
+		itdb_syslog("Client creation/handshake failed: %d\n", lockdown_ret);
 		goto error;
 	}
 
 	/* run query and get format plist */
-	if (LOCKDOWN_E_SUCCESS != lockdownd_get_value(client, NULL, NULL, &global)) {
-		printf("Could not get global domain plist\n");
+	lockdown_ret = lockdownd_get_value(client, NULL, NULL, &global);
+	if (lockdown_ret != LOCKDOWN_E_SUCCESS) {
+		itdb_syslog("Could not get global domain plist: %d\n", lockdown_ret);
 		goto error;
 	}
-	if (LOCKDOWN_E_SUCCESS != lockdownd_get_value(client, "com.apple.mobile.iTunes",
-						      NULL, &value)) {
-		printf("Could not get 'com.apple.mobile.iTunes' domain plist\n");
+	lockdown_ret = lockdownd_get_value(client, "com.apple.mobile.iTunes",
+					   NULL, &value);
+	if (lockdown_ret != LOCKDOWN_E_SUCCESS) {
+		itdb_syslog("Could not get 'com.apple.mobile.iTunes' domain plist: %d\n",
+			    lockdown_ret);
 		goto error;
 	}
 	
 	/* add some required values manually to emulate old plist format */
 	ptr = plist_dict_get_item(global, "SerialNumber");
 	if (ptr == NULL) {
-		printf("Global domain has no 'SerialNumber' key\n");
+		itdb_syslog("Global domain has no 'SerialNumber' key\n");
 		goto error;
 	}
 	plist_get_string_val(ptr, &str);
@@ -98,7 +106,7 @@ read_sysinfo_extended_by_uuid (const char *uuid)
 
 	ptr = plist_dict_get_item(global, "ProductVersion");
 	if (ptr == NULL) {
-		printf("Global domain has no 'ProductVersion' key\n");
+		itdb_syslog("Global domain has no 'ProductVersion' key\n");
 		goto error;
 	}
 	plist_get_string_val(ptr, &str);
@@ -160,7 +168,7 @@ iphone_write_sysinfo_extended (const char *uuid, const char *xml)
 
 	ret = idevice_new(&device, uuid);
 	if (IDEVICE_E_SUCCESS != ret) {
-		printf("No device found with uuid %s, is it plugged in?\n", uuid);
+		itdb_syslog("No device found with uuid %s, is it plugged in?\n", uuid);
 		return FALSE;
 	}
 

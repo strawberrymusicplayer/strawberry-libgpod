@@ -1,5 +1,8 @@
 bin_PROGRAMS=ipod-read-sysinfo-extended
-ipod_read_sysinfo_extended_SOURCES = read-sysinfoextended.c
+ipod_read_sysinfo_extended_SOURCES =		\
+	read-sysinfoextended.c			\
+	itdb-syslog.c				\
+	itdb-syslog.h
 ipod_read_sysinfo_extended_CFLAGS=$(LIBGPOD_CFLAGS) -I$(top_srcdir)/src
 ipod_read_sysinfo_extended_LDADD=$(LIBGPOD_LIBS) $(top_builddir)/src/libgpod.la
 if HAVE_SGUTILS
@@ -20,6 +23,8 @@ endif
 
 COMMON_SOURCES = 						\
 	generic-callout.c					\
+	itdb-syslog.c						\
+	itdb-syslog.h						\
 	$(top_srcdir)/src/itdb_sysinfo_extended_parser.c 	\
 	$(top_srcdir)/src/itdb_plist.c
 
@@ -68,14 +73,22 @@ endif # USE_UDEV
 if HAVE_LIBIMOBILEDEVICE
 if HAVE_HAL
 hal_PROGRAMS+=iphone-callout
-iphone_callout_SOURCES = iphone-callout.c ipod-lockdown.c
+iphone_callout_SOURCES=		\
+	iphone-callout.c	\
+	ipod-lockdown.c		\
+	itdb-syslog.c		\
+	itdb-syslog.h
 iphone_callout_CFLAGS = $(COMMON_CFLAGS) $(HAL_LIBS) $(LIBIMOBILEDEVICE_CFLAGS)
 iphone_callout_LDADD = $(COMMON_LIBS) $(HAL_CFLAGS) $(LIBIMOBILEDEVICE_LIBS)
 endif
 
 if USE_UDEV
 libudev_PROGRAMS+=iphone-set-info
-iphone_set_info_SOURCES  = iphone-callout.c ipod-lockdown.c
+iphone_set_info_SOURCES=	\
+	iphone-callout.c	\
+	ipod-lockdown.c		\
+	itdb-syslog.c		\
+	itdb-syslog.h
 iphone_set_info_CFLAGS   = $(COMMON_CFLAGS) $(LIBIMOBILEDEVICE_CFLAGS)
 iphone_set_info_LDADD    = $(COMMON_LIBS) $(LIBIMOBILEDEVICE_LIBS)
 iphone_set_info_CPPFLAGS = -DUSE_UDEV -DG_LOG_DOMAIN=\"iphone-set-info\"
@@ -86,7 +99,9 @@ if HAVE_SGUTILS
 noinst_PROGRAMS=ipod-time-sync
 ipod_time_sync_SOURCES =	\
 	ipod-time-sync.c	\
-	ipod-scsi.c
+	ipod-scsi.c		\
+	itdb-syslog.c		\
+	itdb-syslog.h
 ipod_time_sync_CFLAGS=$(SGUTILS_CFLAGS) $(LIBGPOD_CFLAGS) 
 ipod_time_sync_LDADD=$(SGUTILS_LIBS) $(LIBGPOD_LIBS) 
 endif

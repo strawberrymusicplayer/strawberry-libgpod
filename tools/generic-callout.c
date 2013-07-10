@@ -28,6 +28,7 @@
 #include "backends.h"
 
 #include <errno.h>
+
 #include <glib.h>
 #include <glib/gstdio.h>
 
@@ -42,6 +43,9 @@
 #include <sys/mount.h>
 #include <itdb.h>
 #include <itdb_device.h>
+
+#include "itdb-syslog.h"
+
 #ifdef HAVE_SGUTILS
 extern char *read_sysinfo_extended (const char *device);
 #endif
@@ -630,8 +634,8 @@ static gboolean write_sysinfo_extended (const char *mountpoint,
 
             controldirpath = itdb_get_control_dir (mountpoint);
             if (controldirpath == NULL) {
-                g_debug("failed to build path for control dir at %s",
-                        mountpoint);
+                itdb_syslog("failed to build path for control dir at %s",
+                            mountpoint);
                 return FALSE;
             }
             devdirpath = g_build_filename (controldirpath, "Device", NULL);
@@ -642,14 +646,14 @@ static gboolean write_sysinfo_extended (const char *mountpoint,
         filename = g_build_filename (devdirpath, "SysInfoExtended", NULL);
         g_free (devdirpath);
         if (filename == NULL) {
-                g_debug("failed to build path for SysInfoExtended at %s",
-                        mountpoint);
+                itdb_syslog("failed to build path for SysInfoExtended at %s",
+                            mountpoint);
                 return FALSE;
         }
 
         success = g_file_set_contents (filename, data, -1, &error);
         if (!success) {
-            g_debug("failed to write %s: %s", filename, error->message);
+            itdb_syslog("failed to write %s: %s", filename, error->message);
             g_clear_error(&error);
         } else {
             g_debug("successfully written SysInfoExtended at %s", filename);
@@ -706,7 +710,7 @@ int itdb_callout_set_ipod_properties (ItdbBackend *backend, const char *dev,
 	}
 
         if (xml == NULL) {
-                g_debug("couldn't read SysInfoExtended from device");
+                itdb_syslog("couldn't read SysInfoExtended from device");
                 return -1;
         } else {
 		g_debug("iPod properties successfully read from SCSI");
@@ -714,8 +718,8 @@ int itdb_callout_set_ipod_properties (ItdbBackend *backend, const char *dev,
 
         props = itdb_sysinfo_extended_parse_from_xml (xml, &error);
 	if (props == NULL) {
-		g_debug("failed to parse SysInfoExtended: %s",
-			error->message);
+		itdb_syslog("failed to parse SysInfoExtended: %s",
+			    error->message);
 		g_clear_error(&error);
 		g_debug("%s", xml);
 		return -1;
@@ -726,6 +730,7 @@ int itdb_callout_set_ipod_properties (ItdbBackend *backend, const char *dev,
 
         ipod_mountpoint = mount_ipod (dev, fstype);
         if (ipod_mountpoint == NULL) {
+                itdb_syslog("failed to mount device");
                 g_free (xml);
                 return -1;
         }

@@ -43,7 +43,7 @@ read_sysinfo_extended_by_uuid (const char *uuid)
 	idevice_t device = NULL;
 	idevice_error_t ret = IDEVICE_E_UNKNOWN_ERROR;
 	char *xml = NULL; char *str = NULL;
-	char *gxml;
+	char *gxml = NULL;
 	uint32_t xml_length = 0;
 	plist_t value = NULL;
 	plist_t global = NULL;
@@ -64,12 +64,12 @@ read_sysinfo_extended_by_uuid (const char *uuid)
 	}
 	if (ret != IDEVICE_E_SUCCESS) {
 		printf("No device found with uuid %s, is it plugged in?\n", uuid);
-		return NULL;
+		goto error;
 	}
 
 	if (LOCKDOWN_E_SUCCESS != lockdownd_client_new_with_handshake(device, &client, "libgpod")) {
-		idevice_free(device);
-		return NULL;
+		printf("Client creation/handshake failed\n");
+		goto error;
 	}
 
 	/* run query and get format plist */
@@ -102,15 +102,6 @@ read_sysinfo_extended_by_uuid (const char *uuid)
 	plist_to_xml(value, &xml, &xml_length);
 
 	ptr = NULL;
-	if (value)
-		plist_free(value);
-	value = NULL;
-	if (global)
-		plist_free(global);
-	global = NULL;
-
-	lockdownd_client_free(client);
-	idevice_free(device);
 
 	/* Jump through hoops since libxml will say to free mem it allocated
 	 * with xmlFree while memory freed with g_free has to be allocated
@@ -119,10 +110,19 @@ read_sysinfo_extended_by_uuid (const char *uuid)
 	if (xml != NULL) {
 		gxml = g_strdup(xml);
 		xmlFree(xml);
-	} else {
-		gxml = NULL;
 	}
+error:
+	if (global != NULL)
+		plist_free(global);
+	if (value != NULL)
+		plist_free(value);
+	if (client != NULL)
+	    lockdownd_client_free(client);
+	if (device != NULL)
+	    idevice_free(device);
+
 	return gxml;
+
 }
 
 G_GNUC_INTERNAL gboolean

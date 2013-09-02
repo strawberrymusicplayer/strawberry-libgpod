@@ -1,3 +1,11 @@
+Overview of changes in libgpod 0.8.3
+====================================
+
+* Add support for libimobiledevice 1.1.5 (there was an API/ABI break)
+* Remove use of some deprecated glib functions
+* Fix various issues found using clang/cppcheck
+* Improve robustness of the iphone callout
+
 Overview of changes in libgpod 0.8.2
 ====================================
 

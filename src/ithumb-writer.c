@@ -1215,7 +1215,7 @@ static gboolean ithumb_rearrange_thumbnail_file (gpointer _key,
 
 /*     printf ("%s: %d\n", filename, g_list_length (thumbs)); */
 
-    /* check if an error occured */
+    /* check if an error occurred */
     if (*result == FALSE)
 	goto out;
 

@@ -20,7 +20,7 @@ device to get an XML file describing the device capabilities (artwork formats
 supported, serial number, ...) and dumps this XML file to
 iPod_Control/Device/SysInfoExtended for future use by libgpod. libgpod doesn't 
 do it directly because sending these SCSI/USB commands might need elevated
-priviledges.
+privileges.
 
 * the application uses libgpod to read the device content
 

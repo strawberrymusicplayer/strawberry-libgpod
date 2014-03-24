@@ -1560,7 +1560,7 @@ static char *extract_mhod_string (FContents *cts, glong seek)
    Itdb_SPLPREF OR Itdb_SPLRULES.
 
    *mhod_len is set to the total length of the mhod (-1 in case an
-   *error occured).
+   *error occurred).
 
    MHODData.valid is set to FALSE in case of any error. cts->error
    will be set accordingly.
@@ -1974,13 +1974,13 @@ static void set_error_a_header_smaller_than_b (GError **error,
 }
 
 
-/* finds next occurence of section @a in section b (@b_seek) starting
+/* finds next occurrence of section @a in section b (@b_seek) starting
    at @start_seek
 */
 /* Return value:
    -1 and cts->error not set: section @a could not be found
-   -1 and cts->error set: some error occured
-   >=0: start of next occurence of section @a
+   -1 and cts->error set: some error occurred
+   >=0: start of next occurrence of section @a
 */
 static glong find_next_a_in_b (FContents *cts,
 			       const gchar *a,
@@ -2767,7 +2767,7 @@ static glong get_mhit (FImport *fimp, glong mhit_seek)
  * adding a new playlist (named @plname) with the tracks specified in
  * @cts. If @plname is NULL, a standard name will be substituted */
 /* Returns FALSE on error, TRUE on success. On error @fimp->error will
- * be set apropriately. */
+ * be set appropriately. */
 static gboolean process_OTG_file (FImport *fimp, FContents *cts,
 				  const gchar *plname)
 {
@@ -2911,7 +2911,7 @@ static gboolean read_OTG_playlists (FImport *fimp)
    (this is treated as a programming error) */
 /* Return value:
    TRUE: import successful
-   FALSE: error occured, fimp->error is set */
+   FALSE: error occurred, fimp->error is set */
 static gboolean parse_tracks (FImport *fimp, glong mhsd_seek)
 {
     FContents *cts;
@@ -2976,7 +2976,7 @@ static gboolean parse_tracks (FImport *fimp, glong mhsd_seek)
    mhsd (this is treated as a programming error) */
 /* Return value:
    TRUE: import successful
-   FALSE: error occured, fimp->error is set */
+   FALSE: error occurred, fimp->error is set */
 static gboolean parse_playlists (FImport *fimp, glong mhsd_seek)
 {
     FContents *cts;
@@ -3443,7 +3443,7 @@ Itdb_iTunesDB *itdb_parse_file (const gchar *filename, GError **error)
 /* ---------------------------------------------------------------------- */
 /* from here on we have the functions for writing the iTunesDB            */
 
-/* will expand @cts when necessary in order to accomodate @len bytes
+/* will expand @cts when necessary in order to accommodate @len bytes
    starting at @seek */
 static void wcontents_maybe_expand (WContents *cts, gulong len,
 				    gulong seek)
@@ -3500,7 +3500,7 @@ static void put_string (WContents *cts, gchar *string)
 }
 
 /* Write 4-byte long @header identifcation taking into account
- * possible reversed endianess */
+ * possible reversed endianness */
 static void put_header (WContents *cts, gchar *header)
 {
     gchar rdata[4];
@@ -3874,7 +3874,7 @@ static void mk_mhbd (FExport *fexp, guint32 children)
 
   /* 0x22 */
   put16lint (cts, fexp->itdb->priv->unk_0x22);  /* unknown */
-  put64lint (cts, fexp->itdb->priv->id_0x24); /* unkown id */
+  put64lint (cts, fexp->itdb->priv->id_0x24); /* unknown id */
   put32lint (cts, 0);  /* unknown */
   /* 0x30 */
   put16lint (cts, 0);   /* set hashing scheme to 0 for now, will be set
@@ -5993,7 +5993,7 @@ static gboolean itdb_write_file_internal (Itdb_iTunesDB *itdb,
 
     if (!filename) filename = itdb->filename;
 
-    /* set endianess flag */
+    /* set endianness flag */
     if (!itdb->device->byte_order)
 	itdb_device_autodetect_endianess (itdb->device);
 
@@ -6896,7 +6896,7 @@ gboolean itdb_shuffle_write_file (Itdb_iTunesDB *itdb,
     g_return_val_if_fail (filename, FALSE);
     g_return_val_if_fail (itdb->device, FALSE);
 
-    /* Set endianess flag just in case */
+    /* Set endianness flag just in case */
     if (!itdb->device->byte_order)
 	    itdb_device_autodetect_endianess (itdb->device);
 
@@ -7065,7 +7065,7 @@ gboolean itdb_rename_files (const gchar *mp, GError **error)
     if (plcname_o)
     {
 	if (rename (plcname_o, plcname_n) == -1)
-	{   /* an error occured */
+	{   /* an error occurred */
 	    g_set_error (error,
 			 G_FILE_ERROR,
 			 g_file_error_from_errno (errno),

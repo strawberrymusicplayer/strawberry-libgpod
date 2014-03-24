@@ -1527,9 +1527,9 @@ itdb_device_musicdirs_number (Itdb_Device *device)
  * @path:   the file to look at.
  * @hdr:    the header string (4 bytes) in case of LITTLE_ENDIAN
  *
- * Check if endianess can be determined by looking at header of @path.
+ * Check if endianness can be determined by looking at header of @path.
  *
- * Returns: G_LITTLE_ENDIAN, G_BIG_ENDIAN or 0 if endianess could not be
+ * Returns: G_LITTLE_ENDIAN, G_BIG_ENDIAN or 0 if endianness could not be
  * determined.
  */
 static guint endianess_check_path (const gchar *path, const gchar *hdr)
@@ -1565,7 +1565,7 @@ static guint endianess_check_path (const gchar *path, const gchar *hdr)
     return byte_order;
 }
 
-/* Attempt to guess the endianess used by this iPod.
+/* Attempt to guess the endianness used by this iPod.
  *
  * It will overwrite the previous setting.
  *

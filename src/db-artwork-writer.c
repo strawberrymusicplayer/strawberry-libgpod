@@ -1094,7 +1094,7 @@ ipod_artwork_mark_new_doubles (Itdb_iTunesDB *itdb, guint max_id)
 		artwork->dbid = 0;
 	    }
 	    else
-	    {   /* first occurence of this artwork */
+	    {   /* first occurrence of this artwork */
 		artwork->id = ++max_id;
 		artwork->dbid = track->dbid;
 		g_hash_table_insert (hash, g_strdup (checkstring), artwork);

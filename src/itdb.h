@@ -265,7 +265,7 @@ typedef enum {
 /**
  * Itdb_IpodInfo:
  * @model_number:    The model number.  This is abbreviated.  If the first
- *                   character is not numeric, it is ommited. e.g.
+ *                   character is not numeric, it is omitted. e.g.
  *                   "MA350 -> A350", "M9829 -> 9829"
  * @capacity:        The iPod's capacity in gigabytes
  * @ipod_model:      The iPod model
@@ -1747,7 +1747,7 @@ struct _Itdb_Track
 
 /**
  * ItdbFileError:
- * @ITDB_FILE_ERROR_SEEK:         file corrupt: illegal seek occured
+ * @ITDB_FILE_ERROR_SEEK:         file corrupt: illegal seek occurred
  * @ITDB_FILE_ERROR_CORRUPT:      file corrupt
  * @ITDB_FILE_ERROR_NOTFOUND:     file not found
  * @ITDB_FILE_ERROR_RENAME:       file could not be renamed

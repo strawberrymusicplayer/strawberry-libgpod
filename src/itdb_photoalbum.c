@@ -206,7 +206,7 @@ gchar *itdb_get_photos_thumb_dir (const gchar *mountpoint)
 /**
  * itdb_photodb_parse:
  * @mp:     mountpoint of the iPod
- * @error:  will contain the error description when an error occured.
+ * @error:  will contain the error description when an error occurred.
  *
  * Parses the photo database of an iPod mounted at @mp.
  *

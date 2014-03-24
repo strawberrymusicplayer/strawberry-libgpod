@@ -160,7 +160,7 @@ static gboolean raw_timezone_to_utc_shift_5g (gint16 raw_timezone,
      * going from Tokyo to LA and then to Europe).
      * The calculation below shifts the origin so that 0 corresponds
      * to UTC-12 and the max is 24*60 and corresponds to UTC+12
-     * Finally, we substract 12*60 to that value to get a signed number
+     * Finally, we subtract 12*60 to that value to get a signed number
      * giving the timezone relative to UTC.
      */
     *utc_shift = raw_timezone*60 - TZ_SHIFT*3600;

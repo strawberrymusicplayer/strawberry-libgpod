@@ -29,9 +29,8 @@
 #ifndef __ITDB_PRIVATE_H__
 #define __ITDB_PRIVATE_H__
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
+#include <config.h>
+
 #include "itdb_device.h"
 #include "itdb.h"
 

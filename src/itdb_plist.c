@@ -43,9 +43,8 @@
  *      - <array> => G_TYPE_ARRAY (GArray *)
  *      - <dict> => G_TYPE_HASH_TABLE (GHashTable *)
  */
-#ifdef HAVE_CONFIG_H
+
 #include <config.h>
-#endif
 
 #ifdef HAVE_LIBXML
 

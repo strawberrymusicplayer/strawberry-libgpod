@@ -19,6 +19,9 @@
 #ifndef __LIBITDBPREP_H
 #define __LIBITDBPREP_H
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverlength-strings"
+
 /** creation statement for 'Dynamic.itdb' */
 static const char Dynamic_create[] =
 	"BEGIN TRANSACTION;" \
@@ -85,5 +88,7 @@ static const char Locations_create[] =
 	"ANALYZE sqlite_master;" \
 	"INSERT INTO \"sqlite_stat1\" VALUES('location','sqlite_autoindex_location_1','1 1 1');" \
 	"COMMIT;";
+
+#pragma GCC diagnostic pop
 
 #endif

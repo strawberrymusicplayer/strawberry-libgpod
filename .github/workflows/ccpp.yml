@@ -1,0 +1,464 @@
+name: C/C++ CI
+on: [push, pull_request]
+
+jobs:
+
+  build_opensuse_lp152:
+    name: Build openSUSE Leap 15.2
+    runs-on: ubuntu-latest
+    container:
+      image: opensuse/leap:15.2
+    steps:
+      - uses: actions/checkout@v1.2.0
+      - name: Update packages
+        run: zypper --non-interactive --gpg-auto-import-keys ref
+      - name: Install openSUSE dependencies
+        run: >
+            zypper --non-interactive --gpg-auto-import-keys install
+            make
+            cmake
+            gcc
+            gcc-c++
+            gettext-tools
+            glibc-devel
+            glib2-devel
+            glib2-tools
+            gdk-pixbuf-devel
+            sqlite3-devel
+            zlib-devel
+            libplist-devel
+            libimobiledevice-devel
+      - name: Create Build Environment
+        shell: bash
+        run: cmake -E make_directory build
+      - name: Configure CMake
+        shell: bash
+        working-directory: build
+        run: cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_WERROR=ON
+      - name: Build
+        working-directory: build
+        run: make
+
+
+  build_opensuse_lp153:
+    name: Build openSUSE Leap 15.3
+    runs-on: ubuntu-latest
+    container:
+      image: opensuse/leap:15.3
+    steps:
+      - uses: actions/checkout@v1.2.0
+      - name: Update packages
+        run: zypper --non-interactive --gpg-auto-import-keys ref
+      - name: Install openSUSE dependencies
+        run: >
+            zypper --non-interactive --gpg-auto-import-keys install
+            make
+            cmake
+            gcc
+            gcc-c++
+            gettext-tools
+            glibc-devel
+            glib2-devel
+            glib2-tools
+            gdk-pixbuf-devel
+            sqlite3-devel
+            zlib-devel
+            libplist-devel
+            libimobiledevice-devel
+      - name: Create Build Environment
+        shell: bash
+        run: cmake -E make_directory build
+      - name: Configure CMake
+        shell: bash
+        working-directory: build
+        run: cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_WERROR=ON
+      - name: Build
+        working-directory: build
+        run: make
+
+
+  build_opensuse_tumbleweed:
+    name: Build openSUSE Tumbleweed
+    runs-on: ubuntu-latest
+    container:
+      image: opensuse/tumbleweed
+    steps:
+      - uses: actions/checkout@v1.2.0
+      - name: Update packages
+        run: zypper --non-interactive --gpg-auto-import-keys ref
+      - name: Upgrade packages
+        run: zypper --non-interactive --gpg-auto-import-keys dup
+      - name: Install openSUSE dependencies
+        run: >
+            zypper --non-interactive --gpg-auto-import-keys install
+            make
+            cmake
+            gcc
+            gcc-c++
+            gettext-tools
+            glibc-devel
+            glib2-devel
+            glib2-tools
+            gdk-pixbuf-devel
+            sqlite3-devel
+            zlib-devel
+            libplist-2_0-devel
+            libimobiledevice-devel
+      - name: Create Build Environment
+        shell: bash
+        run: cmake -E make_directory build
+      - name: Configure CMake
+        shell: bash
+        working-directory: build
+        run: cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_WERROR=ON
+      - name: Build
+        working-directory: build
+        run: make
+
+
+  build_fedora_32:
+    name: Build Fedora 32
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:32
+    steps:
+      - uses: actions/checkout@v1.2.0
+
+      - name: Update packages
+        run: yum update --assumeyes
+
+      - name: Upgrade packages
+        run: yum upgrade --assumeyes
+
+      - name: Install Fedora dependencies
+        run: >
+            dnf install --assumeyes
+            @development-tools
+            gcc
+            gcc-c++
+            make
+            cmake
+            pkgconfig
+            gettext
+            glibc-devel
+            glib-devel
+            gdk-pixbuf2-devel
+            sqlite-devel
+            libplist-devel
+            libimobiledevice-devel
+            zlib-devel
+      - name: Create Build Environment
+        shell: bash
+        run: cmake -E make_directory build
+      - name: Configure CMake
+        shell: bash
+        working-directory: build
+        run: cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_WERROR=ON
+      - name: Build
+        working-directory: build
+        run: make
+
+
+  build_fedora_33:
+    name: Build Fedora 33
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:33
+    steps:
+      - uses: actions/checkout@v1.2.0
+
+      - name: Update packages
+        run: yum update --assumeyes
+
+      - name: Upgrade packages
+        run: yum upgrade --assumeyes
+
+      - name: Install Fedora dependencies
+        run: >
+            dnf install --assumeyes
+            @development-tools
+            gcc
+            gcc-c++
+            make
+            cmake
+            pkgconfig
+            gettext
+            glibc-devel
+            glib-devel
+            gdk-pixbuf2-devel
+            sqlite-devel
+            libplist-devel
+            libimobiledevice-devel
+            zlib-devel
+      - name: Create Build Environment
+        shell: bash
+        run: cmake -E make_directory build
+      - name: Configure CMake
+        shell: bash
+        working-directory: build
+        run: cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_WERROR=ON
+      - name: Build
+        working-directory: build
+        run: make
+
+
+  build_fedora_34:
+    name: Build Fedora 34
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:34
+    steps:
+      - uses: actions/checkout@v1.2.0
+
+      - name: Update packages
+        run: yum update --assumeyes
+
+      - name: Upgrade packages
+        run: yum upgrade --assumeyes
+
+      - name: Install Fedora dependencies
+        run: >
+            dnf install --assumeyes
+            @development-tools
+            gcc
+            gcc-c++
+            make
+            cmake
+            pkgconfig
+            gettext
+            glibc-devel
+            glib-devel
+            gdk-pixbuf2-devel
+            sqlite-devel
+            libplist-devel
+            libimobiledevice-devel
+            zlib-devel
+      - name: Create Build Environment
+        shell: bash
+        run: cmake -E make_directory build
+      - name: Configure CMake
+        shell: bash
+        working-directory: build
+        run: cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_WERROR=ON
+      - name: Build
+        working-directory: build
+        run: make
+
+
+  build_debian_buster:
+    name: Build Debian Buster
+    runs-on: ubuntu-latest
+    container:
+      image: debian:buster
+    steps:
+      - uses: actions/checkout@v1.2.0
+      - name: Install Debian dependencies
+        run: >
+            apt-get update && apt-get install -y
+            make
+            cmake
+            gcc
+            g++
+            pkg-config
+            fakeroot
+            gettext
+            libglib2.0-dev
+            libsqlite3-dev
+            libgdk-pixbuf2.0-dev
+            libplist-dev
+            libimobiledevice-dev
+      - name: Create Build Environment
+        shell: bash
+        run: cmake -E make_directory build
+      - name: Configure CMake
+        shell: bash
+        working-directory: build
+        run: cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+      - name: build
+        shell: bash
+        working-directory: build
+        run: make
+
+
+  build_debian_bullseye:
+    name: Build Debian Bullseye
+    runs-on: ubuntu-latest
+    container:
+      image: debian:bullseye
+    steps:
+      - uses: actions/checkout@v1.2.0
+      - name: Install Debian dependencies
+        run: >
+            apt-get update && apt-get install -y
+            make
+            cmake
+            gcc
+            g++
+            pkg-config
+            fakeroot
+            gettext
+            libglib2.0-dev
+            libsqlite3-dev
+            libgdk-pixbuf2.0-dev
+            libplist-dev
+            libimobiledevice-dev
+      - name: Create Build Environment
+        shell: bash
+        run: cmake -E make_directory build
+      - name: Configure CMake
+        shell: bash
+        working-directory: build
+        run: cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_WERROR=ON
+      - name: Build
+        shell: bash
+        working-directory: build
+        run: make
+
+
+  build_ubuntu_focal:
+    name: Build Ubuntu Focal
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:focal
+    steps:
+      - uses: actions/checkout@v1.2.0
+      - name: Install Ubuntu dependencies
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: >
+            apt-get update && apt-get install -y
+            make
+            cmake
+            gcc
+            g++
+            pkg-config
+            fakeroot
+            gettext
+            libglib2.0-dev
+            libsqlite3-dev
+            libgdk-pixbuf2.0-dev
+            libplist-dev
+            libimobiledevice-dev
+      - name: Create Build Environment
+        shell: bash
+        run: cmake -E make_directory build
+      - name: Configure CMake
+        shell: bash
+        working-directory: build
+        run: cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_WERROR=ON
+      - name: Build
+        shell: bash
+        working-directory: build
+        run: make
+
+
+  build_ubuntu_groovy:
+    name: Build Ubuntu Groovy
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:groovy
+    steps:
+      - uses: actions/checkout@v1.2.0
+      - name: Install Ubuntu dependencies
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: >
+            apt-get update && apt-get install -y
+            make
+            cmake
+            gcc
+            g++
+            pkg-config
+            fakeroot
+            gettext
+            libglib2.0-dev
+            libsqlite3-dev
+            libgdk-pixbuf2.0-dev
+            libplist-dev
+            libimobiledevice-dev
+      - name: Create Build Environment
+        shell: bash
+        run: cmake -E make_directory build
+      - name: Configure CMake
+        shell: bash
+        working-directory: build
+        run: cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_WERROR=ON
+      - name: Build
+        shell: bash
+        working-directory: build
+        run: make
+
+
+  build_ubuntu_hirsute:
+    name: Build Ubuntu Hirsute
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:hirsute
+    steps:
+      - uses: actions/checkout@v1.2.0
+      - name: Install Ubuntu dependencies
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: >
+            apt-get update && apt-get install -y
+            make
+            cmake
+            gcc
+            g++
+            pkg-config
+            fakeroot
+            gettext
+            libglib2.0-dev
+            libsqlite3-dev
+            libgdk-pixbuf2.0-dev
+            libplist-dev
+            libimobiledevice-dev
+      - name: Create Build Environment
+        shell: bash
+        run: cmake -E make_directory build
+      - name: Configure CMake
+        shell: bash
+        working-directory: build
+        run: cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_WERROR=ON
+      - name: Build
+        shell: bash
+        working-directory: build
+        run: make
+
+
+  build-macos:
+    name: Build macOS
+    runs-on: macos-10.15
+    steps:
+      - uses: actions/checkout@v1.2.0
+      - name: Install packages
+        run: >
+          brew install
+          glib
+          pkgconfig
+          gettext
+          sqlite
+          libplist
+          gdk-pixbuf
+          libimobiledevice
+      - name: Create Build Environment
+        shell: bash
+        run: cmake -E make_directory build
+      - name: Configure CMake
+        shell: bash
+        env:
+          BUILD_TYPE: Release
+          MACOSX_DEPLOYMENT_TARGET: 10.15
+          PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
+        working-directory: build
+        run: cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBUILD_WERROR=OFF
+      - name: Build
+        env:
+          BUILD_TYPE: Release
+        working-directory: build
+        shell: bash
+        run: cmake --build . --config $BUILD_TYPE
+      - name: Install
+        working-directory: build
+        shell: bash
+        run: make install

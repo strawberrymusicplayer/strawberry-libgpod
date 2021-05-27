@@ -26,6 +26,8 @@
 |  $Id$
 */
 
+#include "config.h"
+
 #include "itdb_private.h"
 #include <glib/gi18n-lib.h>
 #include <string.h>
@@ -265,6 +267,7 @@ ItdbSPLActionType itdb_splr_get_action_type (const Itdb_SPLRule *splr)
 	case ITDB_SPLACTION_BINARY_UNKNOWN2:
 	    return ITDB_SPLAT_INVALID;
 	}
+	return ITDB_SPLAT_INVALID;
     case ITDB_SPLFT_BINARY_AND:
 	switch ((ItdbSPLAction)splr->action)
 	{
@@ -551,23 +554,23 @@ gboolean itdb_splr_eval (Itdb_SPLRule *splr, Itdb_Track *track)
 	switch(splr->action)
 	{
 	case ITDB_SPLACTION_IS_INT:
-	    return (intcomp == splr->fromvalue);
+	    return (intcomp == (gint64)splr->fromvalue);
 	case ITDB_SPLACTION_IS_NOT_INT:
-	    return (intcomp != splr->fromvalue);
+	    return (intcomp != (gint64)splr->fromvalue);
 	case ITDB_SPLACTION_IS_GREATER_THAN:
-	    return (intcomp > splr->fromvalue);
+	    return (intcomp > (gint64)splr->fromvalue);
 	case ITDB_SPLACTION_IS_LESS_THAN:
-	    return (intcomp < splr->fromvalue);
+	    return (intcomp < (gint64)splr->fromvalue);
 	case ITDB_SPLACTION_IS_IN_THE_RANGE:
-	    return ((intcomp <= splr->fromvalue &&
-		     intcomp >= splr->tovalue) ||
-		    (intcomp >= splr->fromvalue &&
-		     intcomp <= splr->tovalue));
+	    return ((intcomp <= (gint64)splr->fromvalue &&
+		     intcomp >= (gint64)splr->tovalue) ||
+		    (intcomp >= (gint64)splr->fromvalue &&
+		     intcomp <= (gint64)splr->tovalue));
 	case ITDB_SPLACTION_IS_NOT_IN_THE_RANGE:
-	    return ((intcomp < splr->fromvalue &&
-		     intcomp < splr->tovalue) ||
-		    (intcomp > splr->fromvalue &&
-		     intcomp > splr->tovalue));
+	    return ((intcomp < (gint64)splr->fromvalue &&
+		     intcomp < (gint64)splr->tovalue) ||
+		    (intcomp > (gint64)splr->fromvalue &&
+		     intcomp > (gint64)splr->tovalue));
 	}
 	return FALSE;
     case ITDB_SPLFT_BINARY_AND:
@@ -743,7 +746,6 @@ void itdb_playlist_randomize (Itdb_Playlist *pl)
  */
 void itdb_spl_update (Itdb_Playlist *spl)
 {
-    GList *gl;
     Itdb_iTunesDB *itdb;
     GList *sel_tracks = NULL;
 
@@ -760,9 +762,9 @@ void itdb_spl_update (Itdb_Playlist *spl)
     spl->members = NULL;
     spl->num = 0;
 
-    for (gl=itdb->tracks; gl ; gl=gl->next)
+    for (GList *gl_track=itdb->tracks; gl_track ; gl_track=gl_track->next)
     {
-	Itdb_Track *t = gl->data;
+	Itdb_Track *t = gl_track->data;
 	g_return_if_fail (t);
 	/* skip non-checked songs if we have to do so (this takes care
 	   of *all* the match_checked functionality) */
@@ -774,7 +776,6 @@ void itdb_spl_update (Itdb_Playlist *spl)
 	    /* start with true for "match all",
 	       start with false for "match any" */
 	    gboolean matchrules;
-	    GList *gl;
 
 	    if (spl->splrules.match_operator == ITDB_SPLMATCH_AND)
 		 matchrules = TRUE;
@@ -782,7 +783,7 @@ void itdb_spl_update (Itdb_Playlist *spl)
 	    /* assume everything matches with no rules */
 	    if (spl->splrules.rules == NULL) matchrules = TRUE;
 	    /* match all rules */
-	    for (gl=spl->splrules.rules; gl; gl=gl->next)
+	    for (GList *gl=spl->splrules.rules; gl; gl=gl->next)
 	    {
 		Itdb_SPLRule* splr = gl->data;
 		gboolean ruletruth = itdb_splr_eval (splr, t);
@@ -963,6 +964,7 @@ void itdb_spl_update_all (Itdb_iTunesDB *itdb)
 
 static void spl_update2 (Itdb_Playlist *playlist, gpointer data)
 {
+    UNUSED(data)
     g_return_if_fail (playlist);
     if (playlist->is_spl && playlist->splpref.liveupdate)
         itdb_spl_update (playlist);
@@ -1209,7 +1211,11 @@ Itdb_Playlist *itdb_playlist_duplicate (Itdb_Playlist *pl)
 	pl_dup->userdata = pl->userdata_duplicate (pl->userdata);
 
     /* Copy private data too */
+#ifdef HAVE_G_MEMDUP2
+    pl_dup->priv = g_memdup2 (pl->priv, sizeof (Itdb_Playlist_Private));
+#else
     pl_dup->priv = g_memdup (pl->priv, sizeof (Itdb_Playlist_Private));
+#endif
 
     return pl_dup;
 }

@@ -23,7 +23,9 @@
  * This product is not supported/written/published by Apple!
  *
  */
+
 #include "config.h"
+
 #include "backends.h"
 
 #include <stdlib.h>

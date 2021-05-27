@@ -22,9 +22,8 @@
 |  This product is not supported/written/published by Apple!
 */
 
-#if HAVE_CONFIG_H
 #include <config.h>
-#endif
+
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>

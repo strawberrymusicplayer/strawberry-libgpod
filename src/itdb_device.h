@@ -35,9 +35,7 @@
 #ifndef __ITDB_DEVICE_H__
 #define __ITDB_DEVICE_H__
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
+#include <config.h>
 
 #include "itdb.h"
 #include "itdb_sysinfo_extended_parser.h"
@@ -46,7 +44,10 @@
 
 G_BEGIN_DECLS
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 typedef enum _ItdbThumbFormat ItdbThumbFormat;
+#pragma GCC diagnostic pop
 
 enum _ItdbThumbFormat
 {
@@ -74,7 +75,11 @@ enum _ItdbThumbFormat
     THUMB_FORMAT_EXPERIMENTAL_BE,
 };
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 typedef enum _ItdbChecksumType ItdbChecksumType;
+#pragma GCC diagnostic pop
+
 enum _ItdbChecksumType {
     ITDB_CHECKSUM_UNKNOWN	= -1,
     ITDB_CHECKSUM_NONE		= 0,
@@ -185,7 +190,10 @@ G_GNUC_INTERNAL void itdb_device_set_timezone_info (Itdb_Device *device);
 G_GNUC_INTERNAL gboolean itdb_device_is_iphone_family (const Itdb_Device *device);
 G_GNUC_INTERNAL gboolean itdb_device_is_shuffle (const Itdb_Device *device);
 G_GNUC_INTERNAL ItdbChecksumType itdb_device_get_checksum_type (const Itdb_Device *device);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 G_GNUC_INTERNAL enum ItdbShadowDBVersion itdb_device_get_shadowdb_version (const Itdb_Device *device);
+#pragma GCC diagnostic pop
 G_GNUC_INTERNAL gboolean itdb_device_get_hex_uuid (const Itdb_Device *device, unsigned char uuid[20]);
 
 const Itdb_IpodInfo *

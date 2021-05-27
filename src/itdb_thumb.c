@@ -23,16 +23,16 @@
 |
 |  This product is not supported/written/published by Apple!
 */
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+
+#include "config.h"
+
 #include <string.h>
 #include <glib/gi18n-lib.h>
 #include "itdb_private.h"
 #include "itdb_thumb.h"
 
 #ifdef HAVE_GDKPIXBUF
-#include <gdk-pixbuf/gdk-pixbuf.h>
+#  include <gdk-pixbuf/gdk-pixbuf.h>
 #endif
 
 Itdb_Thumb *itdb_thumb_new_from_file (const gchar *filename)
@@ -57,7 +57,11 @@ Itdb_Thumb *itdb_thumb_new_from_data (const guchar *data, gsize len)
     thumb_memory = g_new0 (Itdb_Thumb_Memory, 1);
     thumb = (Itdb_Thumb *)thumb_memory;
     thumb->data_type = ITDB_THUMB_TYPE_MEMORY;
+#ifdef HAVE_G_MEMDUP2
+    thumb_memory->image_data = g_memdup2 (data, len);
+#else
     thumb_memory->image_data = g_memdup (data, len);
+#endif
     thumb_memory->image_data_len = len;
 
     return thumb;

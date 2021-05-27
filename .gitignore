@@ -21,7 +21,6 @@ cscope.out
 /compile
 /config.guess
 /config.h
-/config.h.in
 /config.log
 /config.status
 /config.sub
@@ -122,3 +121,7 @@ bindings/mono/libgpod-sharp/libgpod-sharp.pidb
 /tools/ipod-set-info
 /tools/ipod-time-sync
 /tools/libgpod-callout
+
+.kdev4
+*.kdev4
+/build

@@ -49,9 +49,9 @@
  * normal to get a few unhandled fields, I left out on purpose a few <dict>
  * because I was too lazy to parse them ;)
  */
-#ifdef HAVE_CONFIG_H
+
 #include <config.h>
-#endif
+
 #include <glib-object.h>
 #include <stdlib.h>
 #include <string.h>
@@ -480,7 +480,6 @@ static GList *parse_one_formats_list (GHashTable *sysinfo_dict,
     GValue *to_parse;
     GList *formats = NULL;
     GArray *array;
-    gint i;
 
     to_parse = g_hash_table_lookup (sysinfo_dict, key);
     if (to_parse == NULL) {
@@ -490,7 +489,7 @@ static GList *parse_one_formats_list (GHashTable *sysinfo_dict,
         return NULL;
     }
     array = (GArray*)g_value_get_boxed (to_parse);
-    for (i = 0; i < array->len; i++) {
+    for (guint i = 0; i < array->len; i++) {
         Itdb_ArtworkFormat *format;
 	/* SysInfoExtended on the iPhone has <string> fields in the artwork
 	 * format array in addition to the hash we parse

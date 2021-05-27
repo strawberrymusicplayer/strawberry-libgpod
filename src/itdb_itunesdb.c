@@ -102,10 +102,7 @@
 /* call itdb_parse () to read the Itdb_iTunesDB  */
 /* call itdb_write () to write the Itdb_iTunesDB */
 
-
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
+#include <config.h>
 
 #include "db-artwork-parser.h"
 #include "itdb_device.h"
@@ -124,7 +121,7 @@
 #include <sys/types.h>
 #include <time.h>
 #ifdef HAVE_UNISTD_H
-#include <unistd.h>
+#  include <unistd.h>
 #endif
 
 #define ITUNESDB_DEBUG 0
@@ -388,7 +385,10 @@ static void fcontents_free (FContents *cts)
 static void itdb_fsync (void)
 {
 #ifndef WIN32
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-function-declaration"
     sync();
+#pragma GCC diagnostic pop
 #endif
 }
 
@@ -507,7 +507,7 @@ static gboolean check_seek (FContents *cts, glong seek, glong len)
     g_return_val_if_fail (cts, FALSE);
     g_return_val_if_fail (cts->contents, FALSE);
 
-    if ((seek+len <= cts->length) && (seek >=0))
+    if ((seek+len <= (glong)cts->length) && (seek >=0))
     {
 	return TRUE;
     }
@@ -1134,20 +1134,6 @@ static gint64 playcounts_plist_get_gint64 (GHashTable *track_dict,
     return 0;
 }
 
-#ifndef HAVE_G_INT64_EQUAL
-static gboolean g_int64_equal (gconstpointer v1, gconstpointer v2)
-{
-  return *((const gint64*) v1) == *((const gint64*) v2);
-}
-#endif
-
-#ifndef HAVE_G_INT64_HASH
-static guint g_int64_hash (gconstpointer v)
-{
-  return (guint) *(const gint64*) v;
-}
-#endif
-
 /* called by playcounts_init */
 static gboolean playcounts_plist_read (FImport *fimp, GValue *plist_data)
 {
@@ -1157,7 +1143,6 @@ static gboolean playcounts_plist_read (FImport *fimp, GValue *plist_data)
     GValue *to_parse;
     GArray *array;
     GValue value;
-    gint i;
     guint32 mac_time;
     guint64 *dbid;
 
@@ -1175,7 +1160,7 @@ static gboolean playcounts_plist_read (FImport *fimp, GValue *plist_data)
     playcounts = g_hash_table_new_full (g_int64_hash, g_int64_equal, g_free, g_free);
 
     array = (GArray*)g_value_get_boxed (to_parse);
-    for (i = 0; i < array->len; i++) {
+    for (guint i = 0; i < array->len; i++) {
        value = g_array_index (array, GValue, i);
        if (!G_VALUE_HOLDS (&value, G_TYPE_HASH_TABLE)) {
           continue;
@@ -1497,7 +1482,7 @@ Itdb_iTunesDB *itdb_new (void)
  * on error (e.g. because there's no mhod at @seek). */
 /* A return value of -1 and no error set means that no mhod was found
    at @seek */
-static gint32 get_mhod_type (FContents *cts, glong seek, guint32 *ml)
+static gint32 get_mhod_type (FContents *cts, glong seek, gint32 *ml)
 {
     gint32 type = -1;
 
@@ -1572,11 +1557,11 @@ static char *extract_mhod_string (FContents *cts, glong seek)
    .playlist_id/.string/.chapterdata/.splp/.splrs
 */
 
-static MHODData get_mhod (FImport *fimp, glong mhod_seek, guint32 *ml)
+static MHODData get_mhod (FImport *fimp, glong mhod_seek, gint32 *ml)
 {
   MHODData result;
   gint32 xl;
-  guint32 mhod_len;
+  gint32 mhod_len;
   gint32 header_length;
   gulong seek;
   FContents *cts;
@@ -1663,7 +1648,7 @@ static MHODData get_mhod (FImport *fimp, glong mhod_seek, guint32 *ml)
   case MHOD_ID_PODCASTRSS:
       /* length of string */
       xl = mhod_len - header_length;
-      g_return_val_if_fail (xl < G_MAXUINT - 1, result);
+      g_return_val_if_fail (xl < (gint32)G_MAXUINT - 1, result);
       result.data.string = g_new0 (gchar, xl+1);
       if (!seek_get_n_bytes (cts, result.data.string, seek, xl))
       {
@@ -1679,11 +1664,10 @@ static MHODData get_mhod (FImport *fimp, glong mhod_seek, guint32 *ml)
       seek += 12; /* get past unks */
       if (check_header_seek (cts, "sean", seek+4))
       {
-	  gint i;
 	  guint32 numchapters;
 	  numchapters = get32bint (cts, seek+12) - 1; /* minus 1 for hedr atom */
 	  seek += 20; /* move to atom data */
-	  for (i=0; i<numchapters; ++i)
+	  for (guint i=0; i<numchapters; ++i)
 	  {
 	      if (check_header_seek (cts, "chap", seek+4))
 	      {
@@ -1691,12 +1675,11 @@ static MHODData get_mhod (FImport *fimp, glong mhod_seek, guint32 *ml)
 		  guint32 childlength;
 		  guint32 startpos;
 		  guint32 children;
-		  gint j;
 		  gunichar2 *string_utf16;
 		  startpos = get32bint (cts, seek+8);
 		  children = get32bint (cts, seek+12);
 		  seek += 20;
-		  for (j=0; j<children; ++j)
+		  for (guint j=0; j<children; ++j)
 		  {
 		      childlength = get32bint (cts, seek);
 		      if (check_header_seek (cts, "name", seek+4))
@@ -1748,7 +1731,6 @@ static MHODData get_mhod (FImport *fimp, glong mhod_seek, guint32 *ml)
 	  /* !!! for some reason the SLst part is the only part of the
 	     iTunesDB with big-endian encoding, including UTF16
 	     strings */
-	  gint i;
 	  guint32 numrules;
 	  if (!check_seek (cts, seek, 136))
 	      return result;  /* *ml==-1, result.valid==FALSE */
@@ -1758,7 +1740,7 @@ static MHODData get_mhod (FImport *fimp, glong mhod_seek, guint32 *ml)
 	  result.data.splrules->match_operator = get32bint (cts, seek+12);
 	  seek += 136;  /* I can't find this value stored in the
 			   iTunesDB :-( */
-	  for (i=0; i<numrules; ++i)
+	  for (guint i=0; i<numrules; ++i)
 	  {
 	      guint32 length;
 	      ItdbSPLFieldType ft;
@@ -1875,7 +1857,7 @@ static MHODData get_mhod (FImport *fimp, glong mhod_seek, guint32 *ml)
    UTF8). After use you must free the string with g_free(). Returns
    NULL if no string is avaible. *ml is set to -1 in case of error and
    cts->error is set appropriately. */
-static gchar *get_mhod_string (FImport *fimp, glong seek, guint32 *ml, gint32 *mty)
+static gchar *get_mhod_string (FImport *fimp, glong seek, gint32 *ml, gint32 *mty)
 {
     MHODData mhoddata;
     FContents *cts;
@@ -2111,7 +2093,6 @@ static glong get_mhip (FImport *fimp, glong mhip_seek)
     gboolean first_entry = TRUE;
     FContents *cts;
     guint32 mhip_hlen, mhip_len, mhod_num, mhod_seek;
-    gint32 i;
     gint32 mhod_type;
     guint32 trackid;
 
@@ -2154,9 +2135,9 @@ static glong get_mhip (FImport *fimp, glong mhip_seek)
     /* the mhod that follows gives us the position in the
        playlist (type 100). Just for flexibility, we scan all
        following mhods and pick the type 100 */
-    for (i=0; i<mhod_num; ++i)
+    for (guint32 i=0; i<mhod_num; ++i)
     {
-	guint32 mhod_len;
+	gint32 mhod_len;
 
 	mhod_type = get_mhod_type (cts, mhod_seek, &mhod_len);
 	CHECK_ERROR (fimp, -1);
@@ -2210,7 +2191,7 @@ static glong get_playlist (FImport *fimp, guint mhsd_type, glong mhyp_seek)
 {
   guint32 i, mhipnum, mhod_num;
   glong nextseek, mhod_seek, mhip_seek;
-  guint32 header_len;
+  gint32 header_len;
   Itdb_Playlist *plitem = NULL;
   FContents *cts;
   GList *gl;
@@ -2448,7 +2429,7 @@ static glong get_mhit (FImport *fimp, glong mhit_seek)
   gchar *entry_utf8;
   gint32 type;
   guint32 header_len;
-  guint32 zip;
+  gint32 zip;
   struct playcount *playcount;
   guint32 i, mhod_nums;
   FContents *cts;
@@ -2735,7 +2716,7 @@ static glong get_mhit (FImport *fimp, glong mhit_seek)
   {
       if (playcount->rating != NO_PLAYCOUNT)
       {
-	  if (track->rating != playcount->rating)
+	  if ((gint32)track->rating != playcount->rating)
 	  {
 	      /* backup original rating to app_rating */
 	      track->app_rating = track->rating;
@@ -2832,15 +2813,14 @@ static gboolean process_OTG_file (FImport *fimp, FContents *cts,
 
     if (entry_num > 0)
     {
-	gint i;
-	Itdb_Playlist *pl;
+	Itdb_Playlist *pl = NULL;
 
 	pl = itdb_playlist_new (plname, FALSE);
 	/* Add new playlist */
 	itdb_playlist_add (fimp->itdb, pl, -1);
 
 	/* Add items */
-	for (i=0; i<entry_num; ++i)
+	for (guint i=0; i<entry_num; ++i)
 	{
 	    Itdb_Track *track;
 	    guint32 num = get32lint (cts,
@@ -3450,6 +3430,7 @@ Itdb_iTunesDB *itdb_parse_file (const gchar *filename, GError **error)
 static void wcontents_maybe_expand (WContents *cts, gulong len,
 				    gulong seek)
 {
+    UNUSED(seek)
     g_return_if_fail (cts);
 
     while (cts->pos+len > cts->total)
@@ -4723,6 +4704,8 @@ static void mk_mhod (FExport *fexp, MHODData *mhod)
 	  /* sort list */
 	  switch (mhod->mhod52sorttype)
 	  {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 	  case MHOD52_SORTTYPE_TITLE:
 	      compfunc = mhod52_sort_title;
 	      break;
@@ -4739,11 +4722,14 @@ static void mk_mhod (FExport *fexp, MHODData *mhod)
 	      compfunc = mhod52_sort_composer;
 	      break;
 	  }
+#pragma GCC diagnostic pop
 	  g_return_if_fail (compfunc);
 
 	  /* sort the tracks */
-	  mhod->data.mhod52coltracks = g_list_sort (mhod->data.mhod52coltracks,
-						    compfunc);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+	  mhod->data.mhod52coltracks = g_list_sort (mhod->data.mhod52coltracks, compfunc);
+#pragma GCC diagnostic pop
 	  /* Write the MHOD */
 	  put_header (cts, "mhod");         /* header                     */
 	  put32lint (cts, 24);              /* size of header             */
@@ -5464,6 +5450,7 @@ static void mk_mhod52 (enum MHOD52_SORTTYPE mhod52sorttype, FExport *fexp,
 static void mk_mhod53 (enum MHOD52_SORTTYPE mhod52sorttype, FExport *fexp, 
                        MHODData *mhod)
 {
+    UNUSED(mhod52sorttype)
     mhod->type = MHOD_ID_LIBPLAYLISTJUMPTABLE;
     mk_mhod (fexp, mhod);
     g_list_foreach (mhod->mhod53_list, (GFunc)g_free, NULL);
@@ -6008,7 +5995,7 @@ static gboolean itdb_write_file_internal (Itdb_iTunesDB *itdb,
 
     prepare_itdb_for_write (fexp);
 
-#if HAVE_GDKPIXBUF
+#ifdef HAVE_GDKPIXBUF
     /* only write ArtworkDB if we deal with an iPod
        FIXME: figure out a way to store the artwork data when storing
        to local directories. At the moment it's the application's task
@@ -7443,7 +7430,7 @@ Itdb_Track *itdb_cp_finalize (Itdb_Track *track,
 {
     const gchar *suffix;
     Itdb_Track *use_track;
-    gint i, mplen;
+    gint mplen;
     struct stat statbuf;
 
     /* either supply mountpoint or track */
@@ -7507,7 +7494,7 @@ Itdb_Track *itdb_cp_finalize (Itdb_Track *track,
 
     /* set filetype from the suffix, e.g. '.mp3' -> 'MP3 ' */
     use_track->filetype_marker = 0;
-    for (i=1; i<=4; ++i)   /* start with i=1 to skip the '.' */
+    for (guint i=1; i<=4; ++i)   /* start with i=1 to skip the '.' */
     {
 	use_track->filetype_marker = use_track->filetype_marker << 8;
 	if (strlen (suffix) > i)
@@ -8060,26 +8047,6 @@ gchar *itdb_get_artworkdb_path (const gchar *mountpoint)
  *                       Timestamp stuff                            *
  *                                                                  *
 \*------------------------------------------------------------------*/
-
-/**
- * itdb_time_get_mac_time:
- *
- * Gets the current time in a format appropriate for storing in the libgpod
- * data structures
- *
- * Returns: current time
- *
- * Deprecated: kept for compatibility with older code, directly use
- * g_get_current_time() or time(NULL) instead
- */
-time_t itdb_time_get_mac_time (void)
-{
-    GTimeVal time;
-
-    g_get_current_time (&time);
-
-    return time.tv_sec;
-}
 
 /**
  * itdb_time_mac_to_host:

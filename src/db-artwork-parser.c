@@ -22,9 +22,7 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include "config.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -44,10 +42,10 @@
 
 typedef int (*ParseListItem)(DBParseContext *ctx, GError *error);
 
-
 static int
 parse_mhif (DBParseContext *ctx, GError *error)
 {
+	UNUSED(error)
 	MhifHeader *mhif;
 
 	mhif = db_parse_context_get_m_header (ctx, MhifHeader, "mhif");
@@ -62,6 +60,7 @@ parse_mhif (DBParseContext *ctx, GError *error)
 static int
 parse_mhia (DBParseContext *ctx, Itdb_PhotoAlbum *photo_album, GError *error)
 {
+	UNUSED(error)
 	MhiaHeader *mhia;
 	guint32 image_id;
 
@@ -87,7 +86,11 @@ get_utf16_string (void* buffer, gint length, guint byte_order)
 	/* Byte-swap the utf16 characters if necessary (I'm relying
 	 * on gcc to optimize most of this code away on LE platforms)
 	 */
-	tmp = g_memdup (buffer, length);
+#ifdef HAVE_G_MEMDUP2
+	tmp = g_memdup2 (buffer, length);
+#else
+        tmp = g_memdup (buffer, length);
+#endif
 	for (i = 0; i < length/2; i++) {
 		tmp[i] = get_gint16 (tmp[i], byte_order);
 	}
@@ -106,6 +109,7 @@ struct ParsedMhodString {
 static struct ParsedMhodString *
 parse_mhod_string (DBParseContext *ctx, GError *error)
 {
+	UNUSED(error)
 	struct ParsedMhodString *result;
 	ArtworkDB_MhodHeaderString *mhod_string;
 	ArtworkDB_MhodHeader *mhod;
@@ -116,7 +120,7 @@ parse_mhod_string (DBParseContext *ctx, GError *error)
 	}
 	db_parse_context_set_total_len (ctx, get_gint32 (mhod->total_len, ctx->byte_order));
 
-	if (get_gint32 (mhod->total_len, ctx->byte_order) < sizeof (ArtworkDB_MhodHeaderString)){
+	if ((long)get_gint32 (mhod->total_len, ctx->byte_order) < (long)sizeof (ArtworkDB_MhodHeaderString)){
 		return NULL;
 	}
 
@@ -150,6 +154,7 @@ static int
 parse_mhod_3 (DBParseContext *ctx,
 	      Itdb_Thumb_Ipod_Item *thumb, GError *error)
 {
+	UNUSED(error)
 	struct ParsedMhodString *mhod;
 	mhod = parse_mhod_string (ctx, error);
 	if (mhod == NULL) {
@@ -169,6 +174,7 @@ parse_mhod_3 (DBParseContext *ctx,
 static int
 parse_photo_mhni (DBParseContext *ctx, Itdb_Thumb_Ipod *thumbs, GError *error)
 {
+	UNUSED(error)
 	MhniHeader *mhni;
 	DBParseContext *mhod_ctx; 
 	Itdb_Thumb_Ipod_Item *thumb;
@@ -200,6 +206,7 @@ parse_photo_mhni (DBParseContext *ctx, Itdb_Thumb_Ipod *thumbs, GError *error)
 static int
 parse_photo_mhod (DBParseContext *ctx, Itdb_Thumb_Ipod *thumbs, GError *error)
 {
+	UNUSED(error)
 	ArtworkDB_MhodHeader *mhod;
 	DBParseContext *mhni_ctx;
 	gint32 type;
@@ -230,6 +237,7 @@ parse_photo_mhod (DBParseContext *ctx, Itdb_Thumb_Ipod *thumbs, GError *error)
 static int
 parse_mhii (DBParseContext *ctx, GError *error)
 {
+	UNUSED(error)
 	MhiiHeader *mhii;
 	DBParseContext *mhod_ctx;
 	int num_children;
@@ -388,6 +396,7 @@ static int
 parse_mhl (DBParseContext *ctx, GError *error, 
 	   const char *id, ParseListItem parse_child)
 {
+	UNUSED(error)
 	MhlHeader *mhl;
 	int num_children;
 	DBParseContext *mhi_ctx;
@@ -426,6 +435,7 @@ parse_mhl (DBParseContext *ctx, GError *error,
 static int 
 parse_mhsd (DBParseContext *ctx, GError **error)
 {
+	UNUSED(error)
 	ArtworkDB_MhsdHeader *mhsd;
 
 	mhsd = db_parse_context_get_m_header (ctx, ArtworkDB_MhsdHeader, "mhsd");
@@ -602,6 +612,7 @@ mhfd_associate_itunesdb_artwork (DBParseContext *ctx)
 static int
 parse_mhfd (DBParseContext *ctx, GError **error)
 {
+	UNUSED(error)
 	MhfdHeader *mhfd;
 	DBParseContext *mhsd_context;
 	unsigned int cur_pos;

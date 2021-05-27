@@ -18,9 +18,9 @@
 |  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 |  USA
 */
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+
+#include "config.h"
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -35,14 +35,13 @@
 #include <plist/plist.h>
 
 #ifdef HAVE_LIBIMOBILEDEVICE
-#include <libimobiledevice/libimobiledevice.h>
-#include <libimobiledevice/lockdown.h>
+#  include <libimobiledevice/libimobiledevice.h>
+#  include <libimobiledevice/lockdown.h>
 #endif
 
 #include "itdb.h"
 #include "itdb_private.h"
 #include "itdb_sqlite_queries.h"
-
 
 /** time zone offset in seconds */
 static uint32_t tzoffset = 0;
@@ -131,6 +130,7 @@ static gint compare_track_fields(gconstpointer lhs, gconstpointer rhs)
 
 static gboolean traverse_tracks(gpointer key, gpointer value, gpointer data)
 {
+    UNUSED(value)
     GHashTable *hash = (GHashTable *)data;
 
     if (key != NULL) {
@@ -471,6 +471,7 @@ leave:
 
 static int mk_Genius(Itdb_iTunesDB *itdb, const char *outpath)
 {
+    UNUSED(itdb)
     int res = -1;
     int rebuild = 0;
     gchar *dbf = NULL;
@@ -565,6 +566,7 @@ leave:
 
 static void free_key_val_strings(gpointer key, gpointer value, gpointer user_data)
 {
+	UNUSED(user_data)
 	g_free(key);
 	g_free(value);
 }
@@ -1379,6 +1381,7 @@ leave:
 
 static int mk_Locations(Itdb_iTunesDB *itdb, const char *outpath, const char *uuid)
 {
+    UNUSED(uuid)
     int res = -1;
     gchar *dbf = NULL;
     sqlite3 *db = NULL;
@@ -1489,12 +1492,15 @@ static int mk_Locations(Itdb_iTunesDB *itdb, const char *outpath, const char *uu
 	    int i = 0;
 	    int cnt = 0;
 	    int pos = 0;
-	    int res;
 
 	    if (!track->ipod_path) {
 		continue;
 	    }
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-function-declaration"
+#pragma GCC diagnostic ignored "-Wint-conversion"
 	    ipod_path = strdup(track->ipod_path);
+#pragma GCC diagnostic pop
 	    idx = 0;
 	    res = sqlite3_reset(stmt);
 	    if (res != SQLITE_OK) {
@@ -1513,7 +1519,7 @@ static int mk_Locations(Itdb_iTunesDB *itdb, const char *outpath, const char *uu
 	    /*  perhaps later libgpod will support more. */
 	    sqlite3_bind_int(stmt, ++idx, 0x46494C45);
 	    /* location */
-	    for (i = 0; i < strlen(ipod_path); i++) {
+	    for (i = 0; (unsigned long)i < strlen(ipod_path); i++) {
 		/* replace all ':' with '/' so that the path is valid */
 		if (ipod_path[i] == ':') {
 		    ipod_path[i] = '/';
@@ -1639,6 +1645,9 @@ static void sqlite_func_iphone_sort_key(sqlite3_context *context, int argc, sqli
 	if (argc != 1)
 		fprintf(stderr, "[%s] Error: Unexpected number of arguments: %d\n", __func__, argc);
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverflow"
+
 	switch (sqlite3_value_type(argv[0])) {
 		case SQLITE_TEXT:
 			sval = (const char*)sqlite3_value_text(argv[0]);
@@ -1728,6 +1737,7 @@ static void sqlite_func_iphone_sort_key(sqlite3_context *context, int argc, sqli
 			sqlite3_result_null(context);
 			break;
 	}
+#pragma GCC diagnostic pop
 }
 
 static void sqlite_func_iphone_sort_section(sqlite3_context *context, int argc, sqlite3_value **argv)
@@ -1754,6 +1764,7 @@ static void sqlite_func_iphone_sort_section(sqlite3_context *context, int argc, 
 
 static void run_post_process_commands(Itdb_iTunesDB *itdb, const char *outpath, const char *uuid)
 {
+    UNUSED(uuid)
     plist_t plist_node = NULL;
     plist_t ppc_dict = NULL;
     const gchar *basedb = "Library.itdb";
@@ -1937,7 +1948,7 @@ static void run_post_process_commands(Itdb_iTunesDB *itdb, const char *outpath, 
 			    if (key) {
 				val = g_hash_table_lookup(sqlcmd_map, key);
 				if (val) {
-				    char *errmsg = NULL; 
+				    errmsg = NULL; 
 				    if (SQLITE_OK == sqlite3_exec(db, val, NULL, NULL, &errmsg)) {
 				        /*printf("[%s] executing '%s': OK", __func__, key);*/
 					ok_cnt++;

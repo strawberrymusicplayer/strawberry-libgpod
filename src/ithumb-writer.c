@@ -39,7 +39,7 @@
 #include <string.h>
 
 #ifdef HAVE_UNISTD_H
-#include <unistd.h>
+#  include <unistd.h>
 #endif
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -93,7 +93,7 @@ static guint get_aligned_width (const Itdb_ArtworkFormat *img_info,
     guint width;
     guint alignment = img_info->row_bytes_alignment/pixel_size;
 
-    if (alignment * pixel_size != img_info->row_bytes_alignment) {
+    if (alignment * pixel_size != (gsize)img_info->row_bytes_alignment) {
         g_warning ("RowBytesAlignment (%d) not a multiple of pixel size (%"G_GSIZE_FORMAT")",
                    img_info->row_bytes_alignment, pixel_size);
     }
@@ -132,8 +132,8 @@ pack_RGB_565 (GdkPixbuf *pixbuf, const Itdb_ArtworkFormat *img_info,
 
 	/* Make sure thumb size calculation won't overflow */
 	g_return_val_if_fail (dest_width != 0, NULL);
-	g_return_val_if_fail (dest_width < G_MAXUINT/2, NULL);
-	g_return_val_if_fail (img_info->height < G_MAXUINT/(2*dest_width), NULL);
+	g_return_val_if_fail (dest_width < (gint)G_MAXUINT/2, NULL);
+	g_return_val_if_fail (img_info->height < (gint)G_MAXUINT/(2*dest_width), NULL);
 	*thumb_size = dest_width * img_info->height * 2;
 	result = g_malloc0 (*thumb_size);
 
@@ -238,8 +238,8 @@ pack_RGB_555 (GdkPixbuf *pixbuf, const Itdb_ArtworkFormat *img_info,
 
 	/* Make sure thumb size calculation won't overflow */
 	g_return_val_if_fail (dest_width != 0, NULL);
-	g_return_val_if_fail (dest_width < G_MAXUINT/2, NULL);
-	g_return_val_if_fail (img_info->height < G_MAXUINT/(2*dest_width), NULL);
+	g_return_val_if_fail (dest_width < (gint)G_MAXUINT/2, NULL);
+	g_return_val_if_fail (img_info->height < (gint)G_MAXUINT/(2*dest_width), NULL);
 	*thumb_size = dest_width * img_info->height * 2;
 	result = g_malloc0 (*thumb_size);
 
@@ -342,8 +342,8 @@ pack_RGB_888 (GdkPixbuf *pixbuf, const Itdb_ArtworkFormat *img_info,
 
 	/* Make sure thumb size calculation won't overflow */
 	g_return_val_if_fail (img_info->width != 0, NULL);
-	g_return_val_if_fail (img_info->width < G_MAXUINT/4, NULL);
-	g_return_val_if_fail (img_info->height < G_MAXUINT/(4*img_info->width), NULL);
+	g_return_val_if_fail (img_info->width < (gint)G_MAXUINT/4, NULL);
+	g_return_val_if_fail (img_info->height < (gint)G_MAXUINT/(4*img_info->width), NULL);
 	*thumb_size = img_info->width * img_info->height * 4;
 	result = g_malloc0 (*thumb_size);
 
@@ -403,8 +403,8 @@ static guint16 *derange_pixels (guint16 *pixels_s, guint16 *pixels_d,
     if (pixels_s == NULL)
     {
 	g_return_val_if_fail (width != 0, NULL);
-	g_return_val_if_fail (width < G_MAXUINT/sizeof (guint16), NULL);
-	g_return_val_if_fail (height < G_MAXUINT/(sizeof (guint16)*width), NULL);
+	g_return_val_if_fail (width < (gint)G_MAXUINT/(gint)sizeof (guint16), NULL);
+	g_return_val_if_fail (height < (gint)G_MAXUINT/((gint)sizeof (guint16)*width), NULL);
 
 	pixels_s = g_malloc0 (sizeof (guint16)*width*height);
 
@@ -473,7 +473,6 @@ pack_I420 (GdkPixbuf *orig_pixbuf, const Itdb_ArtworkFormat *img_info,
     gint width, height;
     gint orig_height, orig_width;
     gint rowstride;
-    gint h, z;
     guchar *pixels, *yuvdata;
     guint yuvsize, halfyuv;
     gint ustart, vstart;
@@ -500,8 +499,8 @@ pack_I420 (GdkPixbuf *orig_pixbuf, const Itdb_ArtworkFormat *img_info,
 
     /* Make sure yuvsize calculation won't overflow */
     g_return_val_if_fail (height != 0, NULL);
-    g_return_val_if_fail (height < G_MAXUINT/2, NULL);
-    g_return_val_if_fail (width < G_MAXUINT/(2*height), NULL);
+    g_return_val_if_fail (height < (gint)G_MAXUINT/2, NULL);
+    g_return_val_if_fail (width < (gint)G_MAXUINT/(2*height), NULL);
 
     halfyuv = width*height;
 
@@ -514,7 +513,7 @@ pack_I420 (GdkPixbuf *orig_pixbuf, const Itdb_ArtworkFormat *img_info,
     vstart = ustart + halfyuv/4;
 
     /* FIXME: consider rowstride -- currently we assume rowstride==width */
-    for (z=0,h=0; h < halfyuv; ++h)
+    for (guint z=0, h=0; h < halfyuv; ++h)
     {
 	gint r,g,b;
 	gint u, v, y;
@@ -589,8 +588,8 @@ pack_UYVY (GdkPixbuf *orig_pixbuf, const Itdb_ArtworkFormat *img_info,
 
     /* Make sure yuvsize calculation won't overflow */
     g_return_val_if_fail (height != 0, NULL);
-    g_return_val_if_fail (height < G_MAXUINT/2, NULL);
-    g_return_val_if_fail (width < G_MAXUINT/(2*height), NULL);
+    g_return_val_if_fail (height < (gint)G_MAXUINT/2, NULL);
+    g_return_val_if_fail (width < (gint)G_MAXUINT/(2*height), NULL);
 
     yuvsize = width*2*height;
 
@@ -728,7 +727,7 @@ ithumb_writer_handle_rotation (GdkPixbuf *pixbuf, guint *rotation)
   {
       return gdk_pixbuf_rotate_simple (pixbuf, *rotation);
   }
-  return g_object_ref (G_OBJECT (pixbuf));
+  return (GdkPixbuf*)g_object_ref (G_OBJECT (pixbuf));
 }
 
 /* On the iPhone, thumbnails are presented as squares in a grid.
@@ -968,15 +967,17 @@ ithumb_writer_write_thumbnail (iThumbWriter *writer,
     else if (thumb->data_type == ITDB_THUMB_TYPE_PIXBUF)
     {
         Itdb_Thumb_Pixbuf *thumb_pixbuf = (Itdb_Thumb_Pixbuf *)thumb;
-        pixbuf = g_object_ref (G_OBJECT (thumb_pixbuf->pixbuf));
+        pixbuf = (GdkPixbuf*)g_object_ref (G_OBJECT (thumb_pixbuf->pixbuf));
     }
 
     if (pixbuf == NULL)
     {
 	/* This is quite bad... if we just return FALSE the ArtworkDB
 	   gets messed up. */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 	pixbuf = gdk_pixbuf_from_pixdata (&questionmark_pixdata, FALSE, NULL);
-
+#pragma GCC diagnostic pop
 	if (!pixbuf)
 	{
 	    /* Somethin went wrong. let's insert a red thumbnail */
@@ -1357,7 +1358,10 @@ static gboolean ithumb_rearrange_thumbnail_file (gpointer _key,
     /* offset corresponds to the new length of the file */
     if (offset > 0)
     {   /* Truncate */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-function-declaration"
 	if (ftruncate (fd, offset) == -1)
+#pragma GCC diagnostic pop
 	{
 	    *result = FALSE;
 	    goto out;

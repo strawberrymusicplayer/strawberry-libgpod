@@ -26,7 +26,7 @@
 |  $Id$
 */
 
-#include <config.h>
+#include "config.h"
 
 #include "itdb_private.h"
 #include "itdb_device.h"
@@ -355,7 +355,11 @@ Itdb_Track *itdb_track_duplicate (Itdb_Track *tr)
     tr_dup->sort_tvshow = g_strdup (tr->sort_tvshow);
 
     /* Copy private data too */
+#ifdef HAVE_G_MEMDUP2
+    tr_dup->priv = g_memdup2 (tr->priv, sizeof (Itdb_Track_Private));
+#else
     tr_dup->priv = g_memdup (tr->priv, sizeof (Itdb_Track_Private));
+#endif
 
     /* Copy chapterdata */
     tr_dup->chapterdata = itdb_chapterdata_duplicate (tr->chapterdata);

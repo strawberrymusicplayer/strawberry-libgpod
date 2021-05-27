@@ -45,7 +45,6 @@ static int itdb_iphone_post_notification(idevice_t device,
 {
     np_client_t np = NULL;
 
-#ifdef HAVE_LIBIMOBILEDEVICE_1_1_5
     lockdownd_service_descriptor_t service = NULL;
 
     lockdownd_start_service(client, "com.apple.mobile.notification_proxy", &service);
@@ -55,17 +54,6 @@ static int itdb_iphone_post_notification(idevice_t device,
     }
 
     np_client_new(device, service, &np);
-#else
-    uint16_t nport = 0;
-
-    lockdownd_start_service(client, "com.apple.mobile.notification_proxy", &nport);
-    if (!nport) {
-	fprintf(stderr, "notification_proxy could not be started!\n");
-	return -1;
-    }
-
-    np_client_new(device, nport, &np);
-#endif
 
     if(!np) {
 	fprintf(stderr, "connection to notification_proxy failed!\n");
@@ -89,11 +77,7 @@ int itdb_iphone_start_sync(Itdb_Device *device, void **prepdata)
     itdbprep_t pdata_loc = NULL;
     const char *uuid;
     lockdownd_client_t client = NULL;
-#ifdef HAVE_LIBIMOBILEDEVICE_1_1_5
     lockdownd_service_descriptor_t service = NULL;
-#else
-    uint16_t afcport = 0;
-#endif
     int i;
 
     uuid = itdb_device_get_uuid (device);
@@ -121,7 +105,6 @@ int itdb_iphone_start_sync(Itdb_Device *device, void **prepdata)
 	goto leave_with_err;
     }
 
-#ifdef HAVE_LIBIMOBILEDEVICE_1_1_5
     lockdownd_start_service(client, "com.apple.afc", &service);
     if (!service || !service->port) {
 	fprintf(stderr, "Error: Could not start AFC service!\n");
@@ -129,15 +112,6 @@ int itdb_iphone_start_sync(Itdb_Device *device, void **prepdata)
 	goto leave_with_err;
     }
     afc_client_new(pdata_loc->device, service, &pdata_loc->afc);
-#else
-    lockdownd_start_service(client, "com.apple.afc", &afcport);
-    if (!afcport) {
-	fprintf(stderr, "Error: Could not start AFC service!\n");
-	res = -1;
-	goto leave_with_err;
-    }
-    afc_client_new(pdata_loc->device, afcport, &pdata_loc->afc);
-#endif
     if (!pdata_loc->afc) {
 	fprintf(stderr, "Error: Could not start AFC client!\n");
 	res = -1;
@@ -174,7 +148,10 @@ int itdb_iphone_start_sync(Itdb_Device *device, void **prepdata)
 	if (res == AFC_E_SUCCESS) {
 	    break;
 	} else if (res == AFC_E_OP_WOULD_BLOCK) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-function-declaration"
 	    usleep(LOCK_WAIT);
+#pragma GCC diagnostic pop
 	    continue;
 	} else {
 	    fprintf(stderr, "ERROR: could not lock file! error code: %d\n", res);
@@ -252,6 +229,8 @@ int itdb_iphone_stop_sync(void *sync_ctx)
 	printf("%s called but prepdata->afc is NULL!\n", __func__);
     } else {
 	/* remove .status-com.apple.itdbprep.command.runPostProcess */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wenum-compare"
 	if (afc_remove_path(prepdata->afc, "/iTunes_Control/iTunes/iTunes Library.itlp/DBTemp/.status-com.apple.itdprep.command.runPostProcess") != IDEVICE_E_SUCCESS) {
 	    fprintf(stderr, "Could not delete '.status-com.apple.itdprep.command.runPostProcess'\n");
 	}
@@ -259,6 +238,7 @@ int itdb_iphone_stop_sync(void *sync_ctx)
 	if (afc_remove_path(prepdata->afc, "/iTunes_Control/iTunes/iTunes Library.itlp/DBTemp/ddd.itdbm") != IDEVICE_E_SUCCESS) {
 	    fprintf(stderr, "Could not delete 'ddd.itdbm'\n");
 	}
+#pragma GCC diagnostic pop
 	if (prepdata->lockfile) {
 	    afc_file_lock(prepdata->afc, prepdata->lockfile, AFC_LOCK_UN);
 	    afc_file_close(prepdata->afc, prepdata->lockfile);

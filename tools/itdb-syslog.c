@@ -19,6 +19,7 @@
  * This product is not supported/written/published by Apple!
  *
  */
+
 #include <config.h>
 
 #include <syslog.h>

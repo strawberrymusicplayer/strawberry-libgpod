@@ -21,9 +21,8 @@
  *  This product is not supported/written/published by Apple!
  *
  */
-#ifdef HAVE_CONFIG_H
+
 #include <config.h>
-#endif
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -31,7 +30,7 @@
 #include <fcntl.h>
 #include <string.h>
 #ifdef HAVE_UNISTD_H
-#include <unistd.h>
+#  include <unistd.h>
 #endif
 
 #include <glib.h>
@@ -39,10 +38,6 @@
 #include "db-parse-context.h"
 #include "db-itunes-parser.h"
 #include "itdb_endianness.h"
-
-#ifndef HAVE_G_MAPPED_FILE_UNREF
-#define g_mapped_file_unref(f) g_mapped_file_free(f)
-#endif
 
 DBParseContext *
 db_parse_context_new (const unsigned char *buffer, off_t len, guint byte_order)

@@ -315,14 +315,14 @@ void itdb_photodb_free (Itdb_PhotoDB *photodb)
 
 G_GNUC_INTERNAL gint itdb_get_max_photo_id ( Itdb_PhotoDB *db )
 {
-	gint max_seen_id = 0;
+	gint32 max_seen_id = 0;
 	GList *it;
 
 	for (it = db->photos; it != NULL; it = it->next) {
 		Itdb_Artwork *artwork;
 
 		artwork = (Itdb_Artwork *)it->data;
-		if( artwork->id > max_seen_id )
+		if( (gint32)artwork->id > max_seen_id )
 			max_seen_id = artwork->id;
 	}
         for (it = db->photoalbums; it != NULL; it = it->next) {

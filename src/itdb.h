@@ -35,9 +35,7 @@
 #ifndef __ITUNESDB_H__
 #define __ITUNESDB_H__
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
+#include <config.h>
 
 #include <sys/types.h>
 #include <time.h>
@@ -398,6 +396,12 @@ typedef enum {
  *
  * Since: 0.5.0
  */
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+
+#define UNUSED(x) (void)(x);
+
 typedef enum {
     ITDB_LIMITSORT_RANDOM = 0x02,
     ITDB_LIMITSORT_SONG_NAME = 0x03,
@@ -413,6 +417,8 @@ typedef enum {
     ITDB_LIMITSORT_HIGHEST_RATING = 0x17,
     ITDB_LIMITSORT_LOWEST_RATING = 0x80000017         /* See note above */
 } ItdbLimitSort;
+
+#pragma GCC diagnostic pop
 
 /**
  * ItdbSPLAction:
@@ -2020,7 +2026,6 @@ gboolean itdb_chapterdata_add_chapter (Itdb_Chapterdata *chapterdata,
 
 #ifndef LIBGPOD_DISABLE_DEPRECATED
 /* time functions */
-time_t itdb_time_get_mac_time (void);
 time_t itdb_time_mac_to_host (time_t time);
 time_t itdb_time_host_to_mac (time_t time);
 #endif

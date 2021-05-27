@@ -1,0 +1,11 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#cmakedefine HAVE_GDKPIXBUF
+#cmakedefine HAVE_LIBIMOBILEDEVICE
+#cmakedefine HAVE_UNISTD_H
+#cmakedefine HAVE_G_MEMDUP2
+
+#define LIBGPOD_BLOB_DIR "${LIBGPOD_BLOB_DIR}"
+
+#endif  // CONFIG_H

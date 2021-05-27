@@ -28,7 +28,7 @@
 #include "itdb_private.h"
 #include "db-artwork-parser.h"
 
-#if HAVE_GDKPIXBUF
+#ifdef HAVE_GDKPIXBUF
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
 #include "db-artwork-debug.h"
@@ -100,7 +100,7 @@ ipod_buffer_get_pointer (iPodBuffer *buffer)
 	if (buffer->shared->data->str == NULL) {
 		return NULL;
 	}
-	g_assert (buffer->offset < buffer->shared->data->len);
+	g_assert ((gsize)buffer->offset < buffer->shared->data->len);
 	return &((unsigned char *)buffer->shared->data->str)[buffer->offset];
 }
 
@@ -116,7 +116,7 @@ ipod_buffer_get_sub_buffer (iPodBuffer *buffer, off_t offset)
 {
 	iPodBuffer *sub_buffer;
 
-	g_assert (buffer->offset + offset <= buffer->shared->data->len);
+	g_assert ((gsize)buffer->offset + offset <= buffer->shared->data->len);
 
 	sub_buffer = g_new0 (iPodBuffer, 1);
 	if (sub_buffer == NULL) {
@@ -270,12 +270,12 @@ write_mhod_type_1 (gchar *string, iPodBuffer *buffer)
 static int
 write_mhod_type_3 (gchar *string, iPodBuffer *buffer)
 {
-	ArtworkDB_MhodHeaderString *mhod;
-	unsigned int total_bytes;
-	glong len;
+	ArtworkDB_MhodHeaderString *mhod = NULL;
+	unsigned int total_bytes = 0;
+	glong len = 0;
 	const gint g2l = sizeof (gunichar2);
-	gunichar2 *utf16, *strp;
-	int i, padding;
+	gunichar2 *utf16 = NULL, *strp = NULL;
+	int i = 0, padding = 0;
 
 	g_assert (string != NULL);
 
@@ -362,6 +362,7 @@ write_mhod_type_3 (gchar *string, iPodBuffer *buffer)
 static int
 write_mhni (Itdb_DB *db, Itdb_Thumb_Ipod_Item *item, iPodBuffer *buffer)
 {
+	UNUSED(db)
 	MhniHeader *mhni;
 	unsigned int total_bytes;
 	int bytes_written;
@@ -622,7 +623,7 @@ write_mhba (Itdb_PhotoAlbum *album, iPodBuffer *buffer)
 	MhbaHeader *mhba;
 	iPodBuffer *sub_buffer;
 	unsigned int total_bytes;
-	unsigned int bytes_written;
+	int bytes_written;
 
 	mhba = (MhbaHeader *)init_header (buffer, "mhba", sizeof (MhbaHeader));
 	if (mhba == NULL) {
@@ -700,7 +701,7 @@ write_mhla (Itdb_DB *db, iPodBuffer *buffer)
 	}
 	total_bytes = get_gint32 (mhla->header_len, buffer->byte_order);
 	if (buffer->db_type == DB_TYPE_PHOTO) {
-	    unsigned int bytes_written;
+	    int bytes_written;
             unsigned int num_children = 0;
 	    for (it = db_get_photodb(db)->photoalbums; it != NULL; it = it->next) {
 		Itdb_PhotoAlbum *album = (Itdb_PhotoAlbum *)it->data;
@@ -731,6 +732,7 @@ static int
 write_mhif (Itdb_DB *db, iPodBuffer *buffer,
             const Itdb_ArtworkFormat *img_info)
 {
+	UNUSED(db)
 	MhifHeader *mhif;
 
 	mhif = (MhifHeader *)init_header (buffer, "mhif", sizeof (MhifHeader));

@@ -36,8 +36,8 @@
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
-#if HAVE_GDKPIXBUF
-#include <gdk-pixbuf/gdk-pixbuf.h>
+#ifdef HAVE_GDKPIXBUF
+#  include <gdk-pixbuf/gdk-pixbuf.h>
 #endif
 #include <glib/gi18n-lib.h>
 #include <glib/gstdio.h>
@@ -210,23 +210,22 @@ itdb_artwork_set_thumbnail_from_pixbuf (Itdb_Artwork *artwork,
                                         gint rotation,
                                         GError **error)
 {
+  UNUSED(error)
 #ifdef HAVE_GDKPIXBUF
 /* This operation doesn't make sense when we can't save thumbnail files */
     Itdb_Thumb *thumb;
-    GTimeVal time;
     gint rowstride;
     gint height;
 
     g_return_val_if_fail (artwork, FALSE);
     g_return_val_if_fail (GDK_IS_PIXBUF (pixbuf), FALSE);
 
-    g_get_current_time (&time);
     g_object_get (G_OBJECT (pixbuf),
                   "height", &height,
                   "rowstride", &rowstride,
                   NULL);
     artwork->artwork_size  = rowstride * height;
-    artwork->creation_date = time.tv_sec;
+    artwork->creation_date = g_get_real_time();
 
     thumb = itdb_thumb_new_from_pixbuf (pixbuf);
     itdb_thumb_set_rotation (thumb, rotation);
@@ -272,18 +271,16 @@ itdb_artwork_set_thumbnail_from_data (Itdb_Artwork *artwork,
 				      gint rotation,
 				      GError **error)
 {
+    UNUSED(error)
 #ifdef HAVE_GDKPIXBUF
 /* This operation doesn't make sense when we can't save thumbnail files */
     Itdb_Thumb *thumb;
-    GTimeVal time;
 
     g_return_val_if_fail (artwork, FALSE);
     g_return_val_if_fail (image_data, FALSE);
 
-    g_get_current_time (&time);
-
     artwork->artwork_size  = image_data_len;
-    artwork->creation_date = time.tv_sec;
+    artwork->creation_date = g_get_real_time();
 
     thumb = itdb_thumb_new_from_data (image_data, image_data_len);
     itdb_thumb_set_rotation (thumb, rotation);
@@ -300,7 +297,7 @@ itdb_artwork_set_thumbnail_from_data (Itdb_Artwork *artwork,
 #endif
 }
 
-#if HAVE_GDKPIXBUF
+#ifdef HAVE_GDKPIXBUF
 static guchar *
 unpack_RGB_565 (guint16 *pixels, guint bytes_len, guint byte_order)
 {
@@ -436,13 +433,13 @@ unpack_rec_RGB_555 (guint16 *pixels, guint bytes_len, guint byte_order,
 	guint16 *pixels_arranged;
 
 	g_return_val_if_fail (bytes_len < 2*(G_MAXUINT/3), NULL);
-	g_return_val_if_fail (2*width*height < G_MAXUINT, NULL);
+	g_return_val_if_fail (2*width*height < (gint)G_MAXUINT, NULL);
 	g_return_val_if_fail (width==height, NULL);
 
-	if (2*width*height > bytes_len)
+	if (2*width*height > (gint)bytes_len)
 	{
 	    use_pixels = g_malloc0 (2*width*height);
-	    g_memmove (use_pixels, pixels, bytes_len);
+	    memmove (use_pixels, pixels, bytes_len);
 	    free_use_pixels = TRUE;
 	}
 	else
@@ -527,6 +524,7 @@ static guchar *
 unpack_I420 (guchar *yuvdata, gint bytes_len, guint byte_order,
 		gint width, gint height)
 {
+	UNUSED(byte_order)
 	gint imgsize = width*3*height;
 	gint yuvdim = width*height;
 	guchar* rgbdata;
@@ -537,7 +535,7 @@ unpack_I420 (guchar *yuvdata, gint bytes_len, guint byte_order,
 	gint ustart = yuvdim;
 	gint vstart = yuvdim + yuvdim / 4;
 
-	g_return_val_if_fail (bytes_len < 2*(G_MAXUINT/3), NULL);
+	g_return_val_if_fail (bytes_len < (gint)2*((gint)G_MAXUINT/3), NULL);
 	g_return_val_if_fail (width * height * 2 == bytes_len, NULL);
 
 	rgbdata = g_malloc(imgsize);
@@ -566,6 +564,7 @@ static guchar *
 unpack_UYVY (guchar *yuvdata, gint bytes_len, guint byte_order,
 	     gint width, gint height)
 {
+    UNUSED(byte_order)
     gint imgsize = width*3*height;
     guchar* rgbdata;
     gint halfimgsize = imgsize/2;
@@ -576,7 +575,7 @@ unpack_UYVY (guchar *yuvdata, gint bytes_len, guint byte_order,
     gint u0, y0, v0, y1, u1, y2, v1, y3;
     gint h = 0;
 
-    g_return_val_if_fail (bytes_len < 2*(G_MAXUINT/3), NULL);
+    g_return_val_if_fail (bytes_len < 2*((gint)G_MAXUINT/3), NULL);
 /*     printf ("w=%d h=%d s=%d\n", width, height, bytes_len); */
     g_return_val_if_fail (width * height * 2 == bytes_len, NULL);
 
@@ -797,7 +796,7 @@ static guint get_aligned_width (const Itdb_ArtworkFormat *img_info,
     guint width;
     guint alignment = img_info->row_bytes_alignment/pixel_size;
 
-    if (alignment * pixel_size != img_info->row_bytes_alignment) {
+    if (alignment * pixel_size != (gsize)img_info->row_bytes_alignment) {
         g_warning ("RowBytesAlignment (%d) not a multiple of pixel size (%"G_GSIZE_FORMAT")",
                    img_info->row_bytes_alignment, pixel_size);
     }

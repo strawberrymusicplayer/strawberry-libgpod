@@ -33,10 +33,14 @@
 |  $Id$
 */
 
+#include <config.h>
+
 #include "pixmaps.h"
 
 #ifdef HAVE_GDKPIXBUF
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverlength-strings"
 
 /* Thanks to P.G. Richardson for the image */
 
@@ -4094,5 +4098,6 @@ G_GNUC_INTERNAL const GdkPixdata questionmark_pixdata = {
   "\376\377\377\377\377\377\376\377\377\377\377",
 };
 
+#pragma GCC diagnostic pop
 
 #endif

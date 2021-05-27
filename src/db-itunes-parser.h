@@ -500,6 +500,9 @@ struct _MhodHeaderSmartPlaylistRuleNonString {
 	gchar   unknown[20];
 };
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+
 struct _MhodHeaderSmartPlaylistRule {
 	unsigned char header_id[4];
 	gint32 header_len;
@@ -519,6 +522,7 @@ struct _MhodHeaderSmartPlaylistRule {
 	} rule;
 };
 
+#pragma GCC diagnostic pop
 
 
 struct _MhfdHeader {

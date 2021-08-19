@@ -12,7 +12,6 @@ list(APPEND COMPILE_OPTIONS
   -Wpedantic
   -Wunused
   -Wshadow
-  -Wundef
   -Wuninitialized
   -Wredundant-decls
   -Winit-self

@@ -106,7 +106,7 @@ endif()
 
 add_library(libgpod SHARED ${SOURCES})
 
-target_include_directories(libgpod PRIVATE SYSTEM
+target_include_directories(libgpod SYSTEM PRIVATE
   ${GLIB_INCLUDE_DIRS}
   ${GMODULE_INCLUDE_DIRS}
   ${GOBJECT_INCLUDE_DIRS}
@@ -139,13 +139,13 @@ target_link_libraries(libgpod PRIVATE
 )
 
 if(ENABLE_GDKPIXBUF)
-  target_include_directories(libgpod PRIVATE SYSTEM ${GDK_PIXBUF_INCLUDE_DIRS})
+  target_include_directories(libgpod SYSTEM PRIVATE ${GDK_PIXBUF_INCLUDE_DIRS})
   target_link_directories(libgpod PRIVATE ${GDK_PIXBUF_LIBRARY_DIRS})
   target_link_libraries(libgpod PRIVATE ${GDK_PIXBUF_LIBRARIES})
 endif()
 
 if(ENABLE_LIBIMOBILEDEVICE)
-  target_include_directories(libgpod PRIVATE SYSTEM ${LIBIMOBILEDEVICE_INCLUDE_DIRS})
+  target_include_directories(libgpod SYSTEM PRIVATE ${LIBIMOBILEDEVICE_INCLUDE_DIRS})
   target_link_directories(libgpod PRIVATE ${LIBIMOBILEDEVICE_LIBRARY_DIRS})
   target_link_libraries(libgpod PRIVATE ${LIBIMOBILEDEVICE_LIBRARIES})
 endif()

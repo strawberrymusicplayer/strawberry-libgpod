@@ -104,9 +104,9 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 endif()
 #add_definitions(-DHAVE_LOCALTIME_R)
 
-add_library(libgpod SHARED ${SOURCES})
+add_library(gpod SHARED ${SOURCES})
 
-target_include_directories(libgpod SYSTEM PRIVATE
+target_include_directories(gpod SYSTEM PRIVATE
   ${GLIB_INCLUDE_DIRS}
   ${GMODULE_INCLUDE_DIRS}
   ${GOBJECT_INCLUDE_DIRS}
@@ -115,12 +115,12 @@ target_include_directories(libgpod SYSTEM PRIVATE
   ${ZLIB_INCLUDE_DIRS}
 )
 
-target_include_directories(libgpod PRIVATE
+target_include_directories(gpod PRIVATE
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-target_link_directories(libgpod PRIVATE
+target_link_directories(gpod PRIVATE
   ${GLIB_LIBRARY_DIRS}
   ${GMODULE_LIBRARY_DIRS}
   ${GOBJECT_LIBRARY_DIRS}
@@ -129,7 +129,7 @@ target_link_directories(libgpod PRIVATE
   ${ZLIB_LIBRARY_DIRS}
 )
 
-target_link_libraries(libgpod PRIVATE
+target_link_libraries(gpod PRIVATE
   ${GLIB_LIBRARIES}
   ${GMODULE_LIBRARIES}
   ${GOBJECT_LIBRARIES}
@@ -139,18 +139,18 @@ target_link_libraries(libgpod PRIVATE
 )
 
 if(ENABLE_GDKPIXBUF)
-  target_include_directories(libgpod SYSTEM PRIVATE ${GDK_PIXBUF_INCLUDE_DIRS})
-  target_link_directories(libgpod PRIVATE ${GDK_PIXBUF_LIBRARY_DIRS})
-  target_link_libraries(libgpod PRIVATE ${GDK_PIXBUF_LIBRARIES})
+  target_include_directories(gpod SYSTEM PRIVATE ${GDK_PIXBUF_INCLUDE_DIRS})
+  target_link_directories(gpod PRIVATE ${GDK_PIXBUF_LIBRARY_DIRS})
+  target_link_libraries(gpod PRIVATE ${GDK_PIXBUF_LIBRARIES})
 endif()
 
 if(ENABLE_LIBIMOBILEDEVICE)
-  target_include_directories(libgpod SYSTEM PRIVATE ${LIBIMOBILEDEVICE_INCLUDE_DIRS})
-  target_link_directories(libgpod PRIVATE ${LIBIMOBILEDEVICE_LIBRARY_DIRS})
-  target_link_libraries(libgpod PRIVATE ${LIBIMOBILEDEVICE_LIBRARIES})
+  target_include_directories(gpod SYSTEM PRIVATE ${LIBIMOBILEDEVICE_INCLUDE_DIRS})
+  target_link_directories(gpod PRIVATE ${LIBIMOBILEDEVICE_LIBRARY_DIRS})
+  target_link_libraries(gpod PRIVATE ${LIBIMOBILEDEVICE_LIBRARIES})
 endif()
 
-install(TARGETS libgpod
+install(TARGETS gpod
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib

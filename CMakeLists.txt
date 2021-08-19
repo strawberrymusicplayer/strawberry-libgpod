@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.0)
 
 include(CheckIncludeFiles)
 include(FindPkgConfig)
+include(GNUInstallDirs)
 
 list(APPEND COMPILE_OPTIONS
   -std=c99
